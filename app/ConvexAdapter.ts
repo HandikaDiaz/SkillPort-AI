@@ -18,7 +18,9 @@ type Authenticator = AdapterAuthenticator & { userId: Id<"users"> };
 
 export const ConvexAdapter: Adapter = {
     async createAuthenticator(authenticator: Authenticator) {
-        await callMutation(api.authAdapter.createAuthenticator, { authenticator });
+        await callMutation(api.authAdapter.createAuthenticator, {
+            authenticator: toDB(authenticator),
+        });
         return authenticator;
     },
     async createSession(session: Session) {
