@@ -301,4 +301,16 @@
   .shadow-credential {
     box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15);
   }
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #f5a623, #ffc61a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .shadow-gold {
+    box-shadow: 0 4px 20px rgba(245, 166, 35, 0.3);
+  }
+  .card-glow:hover {
+    box-shadow: 0 0 30px rgba(245, 166, 35, 0.1);
+  }
 }

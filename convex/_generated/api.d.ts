@@ -10,6 +10,10 @@
 
 import type * as authAdapter from "../authAdapter.js";
 import type * as http from "../http.js";
+import type * as milestones from "../milestones.js";
+import type * as notifications from "../notifications.js";
+import type * as projects from "../projects.js";
+import type * as talentProfiles from "../talentProfiles.js";
 import type * as users from "../users.js";
 
 import type {
@@ -21,6 +25,10 @@ import type {
 declare const fullApi: ApiFromModules<{
   authAdapter: typeof authAdapter;
   http: typeof http;
+  milestones: typeof milestones;
+  notifications: typeof notifications;
+  projects: typeof projects;
+  talentProfiles: typeof talentProfiles;
   users: typeof users;
 }>;
 
