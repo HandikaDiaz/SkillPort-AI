@@ -201,6 +201,54 @@ export const talentProfileSchema = {
     yearsExperience: v.number(),
 };
 
+
+export const walletSchema = {
+    userId: v.id("users"),
+    balance: v.number(),         
+    balanceUsd: v.number(),   
+    totalEarned: v.number(),
+    totalEarnedUsd: v.number(),
+    pendingSettlement: v.number(),
+    pendingSettlementUsd: v.number(),
+    updatedAt: v.number(),
+};
+
+export const transactionSchema = {
+    userId: v.id("users"),
+    type: v.union(
+        v.literal("withdrawal"),
+        v.literal("escrow_in"),
+        v.literal("escrow_release"),
+        v.literal("refund"),
+        v.literal("fee"),
+        v.literal("bonus"),
+    ),
+    projectId: v.optional(v.id("projects")),
+    projectName: v.optional(v.string()),
+    amount: v.number(),
+    currency: v.string(),
+    status: v.union(
+        v.literal("success"),
+        v.literal("processing"),
+        v.literal("failed"),
+        v.literal("pending"),
+    ),
+    bankName: v.optional(v.string()),
+    accountNumber: v.optional(v.string()),
+    transactionHash: v.optional(v.string()),
+    createdAt: v.number(),
+    completedAt: v.optional(v.number()),
+};
+
+export const bankAccountSchema = {
+    userId: v.id("users"),
+    bankName: v.string(),
+    accountNumber: v.string(),
+    accountHolder: v.string(),
+    isDefault: v.boolean(),
+    createdAt: v.number(),
+};
+
 const authTables = {
     users: defineTable(userSchema).index("email", ["email"]),
     sessions: defineTable(sessionSchema)
@@ -237,7 +285,16 @@ const projectTables = {
     talentProfiles: defineTable(talentProfileSchema).index("userId", ["userId"]),
 };
 
+const financeTables = {
+    wallets: defineTable(walletSchema).index("userId", ["userId"]),
+    transactions: defineTable(transactionSchema)
+        .index("userId", ["userId"])
+        .index("userIdCreatedAt", ["userId", "createdAt"]),
+    bankAccounts: defineTable(bankAccountSchema).index("userId", ["userId"]),
+};
+
 export default defineSchema({
     ...authTables,
     ...projectTables,
+    ...financeTables,
 });

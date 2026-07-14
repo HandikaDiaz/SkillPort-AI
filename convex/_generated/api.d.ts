@@ -9,12 +9,15 @@
  */
 
 import type * as authAdapter from "../authAdapter.js";
+import type * as bankAccounts from "../bankAccounts.js";
 import type * as http from "../http.js";
 import type * as milestones from "../milestones.js";
 import type * as notifications from "../notifications.js";
 import type * as projects from "../projects.js";
 import type * as talentProfiles from "../talentProfiles.js";
+import type * as transactions from "../transactions.js";
 import type * as users from "../users.js";
+import type * as wallets from "../wallets.js";
 
 import type {
   ApiFromModules,
@@ -24,12 +27,15 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   authAdapter: typeof authAdapter;
+  bankAccounts: typeof bankAccounts;
   http: typeof http;
   milestones: typeof milestones;
   notifications: typeof notifications;
   projects: typeof projects;
   talentProfiles: typeof talentProfiles;
+  transactions: typeof transactions;
   users: typeof users;
+  wallets: typeof wallets;
 }>;
 
 /**
