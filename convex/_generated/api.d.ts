@@ -18,6 +18,7 @@ import type * as notifications from "../notifications.js";
 import type * as projects from "../projects.js";
 import type * as talentProfiles from "../talentProfiles.js";
 import type * as transactions from "../transactions.js";
+import type * as userSettings from "../userSettings.js";
 import type * as users from "../users.js";
 import type * as wallets from "../wallets.js";
 
@@ -38,6 +39,7 @@ declare const fullApi: ApiFromModules<{
   projects: typeof projects;
   talentProfiles: typeof talentProfiles;
   transactions: typeof transactions;
+  userSettings: typeof userSettings;
   users: typeof users;
   wallets: typeof wallets;
 }>;

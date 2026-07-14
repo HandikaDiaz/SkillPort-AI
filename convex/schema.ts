@@ -296,6 +296,36 @@ export const byocInviteSchema = {
     projectId: v.optional(v.id("projects")),
 };
 
+export const userSettingsSchema = {
+    userId: v.id("users"),
+    // Profile
+    displayName: v.optional(v.string()),
+    title: v.optional(v.string()),
+    bio: v.optional(v.string()),
+    location: v.optional(v.string()),
+    languages: v.optional(v.array(v.string())),
+    hourlyRate: v.optional(v.number()),
+    projectRate: v.optional(v.number()),
+    // Portfolio
+    skills: v.optional(v.array(v.string())),
+    githubUrl: v.optional(v.string()),
+    behanceUrl: v.optional(v.string()),
+    dribbbleUrl: v.optional(v.string()),
+    // Preferences
+    projectTypes: v.optional(v.array(v.string())),
+    minBudget: v.optional(v.number()),
+    maxBudget: v.optional(v.number()),
+    preferredRegions: v.optional(v.array(v.string())),
+    availability: v.optional(v.array(v.string())),
+    // Notifications
+    notifyMilestoneApproved: v.optional(v.boolean()),
+    notifyPaymentReceived: v.optional(v.boolean()),
+    notifyByocInvite: v.optional(v.boolean()),
+    notifyDeadlineReminder: v.optional(v.boolean()),
+    notifyWeeklySummary: v.optional(v.boolean()),
+    updatedAt: v.number(),
+};
+
 const authTables = {
     users: defineTable(userSchema).index("email", ["email"]),
     sessions: defineTable(sessionSchema)
@@ -356,10 +386,15 @@ const byocTables = {
         .index("talentIdStatus", ["talentId", "status"]),
 };
 
+const settingsTables = {
+    userSettings: defineTable(userSettingsSchema).index("userId", ["userId"]),
+};
+
 export default defineSchema({
     ...authTables,
     ...projectTables,
     ...financeTables,
     ...credentialTables,
     ...byocTables,
+    ...settingsTables,
 });
