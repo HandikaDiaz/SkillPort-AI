@@ -204,8 +204,8 @@ export const talentProfileSchema = {
 
 export const walletSchema = {
     userId: v.id("users"),
-    balance: v.number(),         
-    balanceUsd: v.number(),   
+    balance: v.number(),
+    balanceUsd: v.number(),
     totalEarned: v.number(),
     totalEarnedUsd: v.number(),
     pendingSettlement: v.number(),
@@ -247,6 +247,32 @@ export const bankAccountSchema = {
     accountHolder: v.string(),
     isDefault: v.boolean(),
     createdAt: v.number(),
+};
+
+export const credentialSchema = {
+    userId: v.id("users"),
+    globalScore: v.number(),
+    previousScore: v.optional(v.number()),
+    isVerified: v.boolean(),
+    verificationHash: v.optional(v.string()),
+    updatedAt: v.number(),
+};
+
+export const cultureDimensionSchema = {
+    userId: v.id("users"),
+    key: v.string(),
+    label: v.string(),
+    score: v.number(),
+    updatedAt: v.number(),
+};
+
+export const credentialEventSchema = {
+    userId: v.id("users"),
+    date: v.number(),
+    event: v.string(),
+    scoreChange: v.optional(v.number()),
+    projectId: v.optional(v.id("projects")),
+    projectName: v.optional(v.string()),
 };
 
 const authTables = {
@@ -293,8 +319,19 @@ const financeTables = {
     bankAccounts: defineTable(bankAccountSchema).index("userId", ["userId"]),
 };
 
+const credentialTables = {
+    credentials: defineTable(credentialSchema).index("userId", ["userId"]),
+    cultureDimensions: defineTable(cultureDimensionSchema)
+        .index("userId", ["userId"])
+        .index("userIdKey", ["userId", "key"]),
+    credentialEvents: defineTable(credentialEventSchema)
+        .index("userId", ["userId"])
+        .index("userIdDate", ["userId", "date"]),
+};
+
 export default defineSchema({
     ...authTables,
     ...projectTables,
     ...financeTables,
+    ...credentialTables,
 });
