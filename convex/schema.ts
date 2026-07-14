@@ -275,6 +275,27 @@ export const credentialEventSchema = {
     projectName: v.optional(v.string()),
 };
 
+export const byocInviteSchema = {
+    talentId: v.id("users"),
+    clientName: v.string(),
+    clientEmail: v.string(),
+    projectName: v.string(),
+    budget: v.number(),
+    currency: v.string(),
+    milestoneCount: v.number(),
+    message: v.optional(v.string()),
+    status: v.union(
+        v.literal("pending"),
+        v.literal("sent"),
+        v.literal("accepted"),
+        v.literal("active"),
+        v.literal("declined"),
+    ),
+    sentAt: v.number(),
+    acceptedAt: v.optional(v.number()),
+    projectId: v.optional(v.id("projects")),
+};
+
 const authTables = {
     users: defineTable(userSchema).index("email", ["email"]),
     sessions: defineTable(sessionSchema)
@@ -329,9 +350,16 @@ const credentialTables = {
         .index("userIdDate", ["userId", "date"]),
 };
 
+const byocTables = {
+    byocInvites: defineTable(byocInviteSchema)
+        .index("talentId", ["talentId"])
+        .index("talentIdStatus", ["talentId", "status"]),
+};
+
 export default defineSchema({
     ...authTables,
     ...projectTables,
     ...financeTables,
     ...credentialTables,
+    ...byocTables,
 });
