@@ -326,6 +326,32 @@ export const userSettingsSchema = {
     updatedAt: v.number(),
 };
 
+export const stressTestSchema = {
+    userId: v.id("users"),
+    score: v.number(),
+    status: v.union(
+        v.literal("completed"),
+        v.literal("in_progress"),
+        v.literal("abandoned"),
+    ),
+    timeSpent: v.number(),
+    answers: v.array(
+        v.object({
+            questionId: v.string(),
+            selectedOption: v.number(),
+            dimension: v.string(),
+        })
+    ),
+    dimensionScores: v.array(
+        v.object({
+            dimension: v.string(),
+            score: v.number(),
+        })
+    ),
+    completedAt: v.optional(v.number()),
+    createdAt: v.number(),
+};
+
 const authTables = {
     users: defineTable(userSchema).index("email", ["email"]),
     sessions: defineTable(sessionSchema)
@@ -390,6 +416,12 @@ const settingsTables = {
     userSettings: defineTable(userSettingsSchema).index("userId", ["userId"]),
 };
 
+const testTables = {
+    stressTests: defineTable(stressTestSchema)
+        .index("userId", ["userId"])
+        .index("userIdCompletedAt", ["userId", "completedAt"]),
+};
+
 export default defineSchema({
     ...authTables,
     ...projectTables,
@@ -397,4 +429,5 @@ export default defineSchema({
     ...credentialTables,
     ...byocTables,
     ...settingsTables,
+    ...testTables,
 });

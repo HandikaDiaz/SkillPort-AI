@@ -16,6 +16,7 @@ import type * as http from "../http.js";
 import type * as milestones from "../milestones.js";
 import type * as notifications from "../notifications.js";
 import type * as projects from "../projects.js";
+import type * as stressTests from "../stressTests.js";
 import type * as talentProfiles from "../talentProfiles.js";
 import type * as transactions from "../transactions.js";
 import type * as userSettings from "../userSettings.js";
@@ -37,6 +38,7 @@ declare const fullApi: ApiFromModules<{
   milestones: typeof milestones;
   notifications: typeof notifications;
   projects: typeof projects;
+  stressTests: typeof stressTests;
   talentProfiles: typeof talentProfiles;
   transactions: typeof transactions;
   userSettings: typeof userSettings;
