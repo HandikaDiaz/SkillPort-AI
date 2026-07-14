@@ -1,13 +1,43 @@
-import { exportJWK, exportPKCS8, generateKeyPair } from "jose";
+// import { generateKeyPairSync } from "crypto";
+// import { writeFileSync } from "fs";
 
-const keys = await generateKeyPair("RS256", { extractable: true }); 
-const privateKey = await exportPKCS8(keys.privateKey);
-const publicKey = await exportJWK(keys.publicKey);
-const jwks = JSON.stringify({ keys: [{ use: "sig", ...publicKey }] });
+// // Generate RSA key pair (PKCS#8)
+// const { privateKey, publicKey } = generateKeyPairSync("rsa", {
+//     modulusLength: 2048,
+//     publicKeyEncoding: {
+//         type: "spki",
+//         format: "pem",
+//     },
+//     privateKeyEncoding: {
+//         type: "pkcs8",
+//         format: "pem",
+//     },
+// });
 
-process.stdout.write(
-    `CONVEX_AUTH_PRIVATE_KEY="${privateKey.replace(/\n/g, "\\n")}"`,
-);
-process.stdout.write("\n\n");
-process.stdout.write(`JWKS=${jwks}`);
-process.stdout.write("\n");
+// console.log("=== PRIVATE KEY (PKCS#8) ===");
+// console.log(privateKey);
+
+// console.log("\n=== PUBLIC KEY ===");
+// console.log(publicKey);
+
+// generate-jwks.mjs
+import { readFileSync } from "fs";  // ✅ Tambah ini
+import { createPublicKey } from "crypto";
+
+const privateKeyPem = readFileSync("private-key.pem", "utf-8");
+const publicKey = createPublicKey(privateKeyPem);
+const jwk = publicKey.export({ format: "jwk" });
+
+const jwks = JSON.stringify({
+    keys: [
+        {
+            use: "sig",
+            kty: "RSA",
+            n: jwk.n,
+            e: jwk.e,
+        },
+    ],
+});
+
+console.log("=== JWKS (simpan di Convex Dashboard) ===");
+console.log(`JWKS=${jwks}`);

@@ -10,6 +10,7 @@
 
 import type * as authAdapter from "../authAdapter.js";
 import type * as http from "../http.js";
+import type * as users from "../users.js";
 
 import type {
   ApiFromModules,
@@ -20,6 +21,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   authAdapter: typeof authAdapter;
   http: typeof http;
+  users: typeof users;
 }>;
 
 /**

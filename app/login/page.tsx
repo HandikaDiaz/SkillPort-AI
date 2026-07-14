@@ -12,7 +12,6 @@ export default async function LoginPage() {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-950 via-primary-900 to-neutral-900 px-4 py-12 sm:px-6 lg:px-8 relative overflow-hidden">
-            {/* Background elements */}
             <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-secondary-500/10 rounded-full blur-[120px] pointer-events-none"></div>
             <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-primary-500/10 rounded-full blur-[120px] pointer-events-none"></div>
 

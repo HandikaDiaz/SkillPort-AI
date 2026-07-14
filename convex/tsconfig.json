@@ -27,7 +27,7 @@
   },
   "include": [
     "./**/*"
-  ],
+, "../auth.ts"  ],
   "exclude": [
     "./_generated"
   ]
