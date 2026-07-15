@@ -12,81 +12,49 @@ import {
     FileText,
     Building2,
     ArrowRight,
-    Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import StatusBadge from "@/components/ui/statusBadge";
 import { formatDate } from "@/lib/utils";
 
-const BANK_LIST = ["BCA", "Mandiri", "BNI", "BRI", "CIMB Niaga"];
-
 export default function TalentFinance() {
     const { data: session } = useSession();
-    const userId = session?.user?.id as any;
-
-    const wallet = useQuery(api.wallets.getByUser, userId ? { userId } : "skip");
-    const transactions = useQuery(
-        api.transactions.getByUser,
-        userId ? { userId } : "skip"
-    );
-    const bankAccounts = useQuery(
-        api.bankAccounts.getByUser,
-        userId ? { userId } : "skip"
-    );
-
-    const createTransaction = useMutation(api.transactions.create);
-
     const [withdrawAmount, setWithdrawAmount] = useState("");
-    const [selectedBank, setSelectedBank] = useState(BANK_LIST[0]);
+
+    const balance = useQuery(
+        api.finances.getBalance,
+        session?.user?.id ? { userId: session.user.id as any } : "skip"
+    );
+    const transactions = useQuery(
+        api.finances.getTransactions,
+        session?.user?.id ? { userId: session.user.id as any } : "skip"
+    );
+
+    const createWithdrawal = useMutation(api.finances.createWithdrawal);
+
+    const banks = ["BCA", "Mandiri", "BNI", "BRI", "CIMB Niaga"];
+    const [selectedBank, setSelectedBank] = useState(banks[0]);
     const [accountNumber, setAccountNumber] = useState("");
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [submitError, setSubmitError] = useState("");
-
-    const isLoading = wallet === undefined || transactions === undefined;
-
-    const formatIdr = (amount: number) =>
-        `IDR ${amount.toLocaleString("id-ID")}`;
-    const formatUsd = (amount: number) => `$ ${amount.toLocaleString("en-US")}`;
 
     const handleWithdraw = async () => {
-        const amount = parseInt(withdrawAmount.replace(/\D/g, ""));
-        if (!amount || amount < 100000) {
-            setSubmitError("Minimal pencairan Rp 100.000");
-            return;
-        }
-        if (amount > (wallet?.balance || 0)) {
-            setSubmitError("Saldo tidak mencukupi");
-            return;
-        }
-
-        setIsSubmitting(true);
-        setSubmitError("");
+        if (!session?.user?.id || !withdrawAmount) return;
 
         try {
-            await createTransaction({
-                userId,
-                type: "withdrawal",
-                amount,
-                currency: "IDR",
+            await createWithdrawal({
+                userId: session.user.id as any,
+                amount: parseInt(withdrawAmount),
                 bankName: selectedBank,
                 accountNumber,
             });
             setWithdrawAmount("");
             setAccountNumber("");
+            alert("Pencairan berhasil diajukan!");
         } catch (error) {
-            setSubmitError("Gagal mengajukan pencairan");
-        } finally {
-            setIsSubmitting(false);
+            alert("Gagal mengajukan pencairan");
         }
     };
 
-    // if (isLoading) {
-    //     return (
-    //         <div className="flex items-center justify-center min-h-[60vh]">
-    //             <Loader2 className="w-8 h-8 animate-spin text-secondary-500" />
-    //         </div>
-    //     );
-    // }
+    const isLoading = balance === undefined || transactions === undefined;
 
     return (
         <div className="space-y-6">
@@ -107,24 +75,21 @@ export default function TalentFinance() {
                         <Banknote className="w-5 h-5 text-secondary-600" />
                     </div>
                     <p className="text-data-lg text-primary-900">
-                        {formatIdr(wallet?.balance || 0)}
+                        {isLoading
+                            ? "Memuat..."
+                            : `IDR ${(balance?.available || 0).toLocaleString()}`}
                     </p>
                     <p className="text-body-sm text-neutral-500 mt-1">
-                        {formatUsd(wallet?.balanceUsd || 0)}
+                        $ {((balance?.available || 0) / 15600).toFixed(0)}
                     </p>
                     <Button
                         size="sm"
                         className="mt-4 bg-secondary-500 hover:bg-secondary-600 text-white w-full"
-                        onClick={() =>
-                            document
-                                .getElementById("withdrawal-form")
-                                ?.scrollIntoView({ behavior: "smooth" })
-                        }
+                        onClick={() => document.getElementById("withdraw-form")?.scrollIntoView({ behavior: "smooth" })}
                     >
                         Cairkan ke Rekening
                     </Button>
                 </div>
-
                 <div className="bg-white rounded-xl border border-neutral-200 p-6">
                     <div className="flex items-center justify-between mb-4">
                         <span className="text-body-sm text-neutral-500">
@@ -133,13 +98,14 @@ export default function TalentFinance() {
                         <Clock className="w-5 h-5 text-warning" />
                     </div>
                     <p className="text-data-lg text-primary-900">
-                        {formatIdr(wallet?.pendingSettlement || 0)}
+                        {isLoading
+                            ? "Memuat..."
+                            : `IDR ${(balance?.pending || 0).toLocaleString()}`}
                     </p>
                     <p className="text-body-sm text-neutral-500 mt-1">
-                        Milestone menunggu approval
+                        milestone menunggu approval
                     </p>
                 </div>
-
                 <div className="bg-white rounded-xl border border-neutral-200 p-6">
                     <div className="flex items-center justify-between mb-4">
                         <span className="text-body-sm text-neutral-500">
@@ -148,18 +114,21 @@ export default function TalentFinance() {
                         <TrendingUp className="w-5 h-5 text-success" />
                     </div>
                     <p className="text-data-lg text-primary-900">
-                        {formatIdr(wallet?.totalEarned || 0)}
+                        {isLoading
+                            ? "Memuat..."
+                            : `IDR ${(balance?.totalEarned || 0).toLocaleString()}`}
                     </p>
-                    <p className="text-body-sm text-neutral-500 mt-1">sejak bergabung</p>
+                    <p className="text-body-sm text-neutral-500 mt-1">
+                        sejak bergabung
+                    </p>
                 </div>
             </div>
 
             {/* Withdrawal Form */}
-            <div
-                id="withdrawal-form"
-                className="bg-white rounded-xl border border-neutral-200 p-6"
-            >
-                <h2 className="text-h3 text-primary-900 mb-6">Pencairan ke Rekening</h2>
+            <div id="withdraw-form" className="bg-white rounded-xl border border-neutral-200 p-6">
+                <h2 className="text-h3 text-primary-900 mb-6">
+                    Pencairan ke Rekening
+                </h2>
                 <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-4">
                         <div>
@@ -171,7 +140,7 @@ export default function TalentFinance() {
                                 onChange={(e) => setSelectedBank(e.target.value)}
                                 className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info bg-white"
                             >
-                                {BANK_LIST.map((bank) => (
+                                {banks.map((bank) => (
                                     <option key={bank} value={bank}>
                                         {bank}
                                     </option>
@@ -198,18 +167,14 @@ export default function TalentFinance() {
                                 type="number"
                                 value={withdrawAmount}
                                 onChange={(e) => setWithdrawAmount(e.target.value)}
-                                placeholder="Minimal Rp 100.000"
+                                placeholder="Minimal Rp 100,000"
                                 className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
                             />
                             <p className="text-caption text-neutral-500 mt-1">
-                                Maksimal: {formatIdr(wallet?.balance || 0)}
+                                Maksimal: IDR {(balance?.available || 0).toLocaleString()}
                             </p>
                         </div>
-                        {submitError && (
-                            <p className="text-caption text-error">{submitError}</p>
-                        )}
                     </div>
-
                     <div className="space-y-4">
                         <div className="p-4 rounded-lg bg-neutral-50 border border-neutral-200">
                             <div className="flex items-center gap-3 mb-3">
@@ -223,7 +188,7 @@ export default function TalentFinance() {
                                     <span className="text-neutral-500">Jumlah</span>
                                     <span className="text-primary-800">
                                         {withdrawAmount
-                                            ? formatIdr(parseInt(withdrawAmount) || 0)
+                                            ? `IDR ${parseInt(withdrawAmount).toLocaleString()}`
                                             : "-"}
                                     </span>
                                 </div>
@@ -237,7 +202,7 @@ export default function TalentFinance() {
                                     </span>
                                     <span className="font-medium text-primary-800">
                                         {withdrawAmount
-                                            ? formatIdr(parseInt(withdrawAmount) || 0)
+                                            ? `IDR ${parseInt(withdrawAmount).toLocaleString()}`
                                             : "-"}
                                     </span>
                                 </div>
@@ -254,18 +219,12 @@ export default function TalentFinance() {
                             disabled={
                                 !withdrawAmount ||
                                 parseInt(withdrawAmount) < 100000 ||
-                                isSubmitting ||
+                                parseInt(withdrawAmount) > (balance?.available || 0) ||
                                 !accountNumber
                             }
                             onClick={handleWithdraw}
                         >
-                            {isSubmitting ? (
-                                <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                            ) : (
-                                <>
-                                    Ajukan Pencairan <ArrowRight className="w-4 h-4 ml-2" />
-                                </>
-                            )}
+                            Ajukan Pencairan <ArrowRight className="w-4 h-4 ml-2" />
                         </Button>
                     </div>
                 </div>
@@ -301,12 +260,15 @@ export default function TalentFinance() {
                             </tr>
                         </thead>
                         <tbody>
-                            {transactions?.length === 0 ? (
+                            {isLoading ? (
                                 <tr>
-                                    <td
-                                        colSpan={5}
-                                        className="py-8 text-center text-body-sm text-neutral-500"
-                                    >
+                                    <td colSpan={5} className="py-8 text-center text-neutral-500">
+                                        Memuat...
+                                    </td>
+                                </tr>
+                            ) : transactions?.length === 0 ? (
+                                <tr>
+                                    <td colSpan={5} className="py-8 text-center text-neutral-500">
                                         Belum ada transaksi
                                     </td>
                                 </tr>
@@ -321,51 +283,44 @@ export default function TalentFinance() {
                                         </td>
                                         <td className="py-4 pr-4">
                                             <span
-                                                className={`inline-flex px-2 py-1 rounded-full text-caption font-medium ${tx.type === "withdrawal"
+                                                className={`inline-flex px-2 py-1 rounded-full text-caption font-medium ${tx.type === "withdrawal" || tx.type === "release"
                                                         ? "bg-info-light text-info"
-                                                        : tx.type === "escrow_in" ||
-                                                            tx.type === "escrow_release"
+                                                        : tx.type === "deposit" || tx.type === "escrow"
                                                             ? "bg-success-light text-success"
                                                             : "bg-error-light text-error"
                                                     }`}
                                             >
                                                 {tx.type === "withdrawal"
                                                     ? "Pencairan"
-                                                    : tx.type === "escrow_in"
-                                                        ? "Escrow Masuk"
-                                                        : tx.type === "escrow_release"
-                                                            ? "Escrow Release"
-                                                            : tx.type === "refund"
-                                                                ? "Refund"
-                                                                : tx.type}
+                                                    : tx.type === "release"
+                                                        ? "Escrow Keluar"
+                                                        : tx.type === "deposit"
+                                                            ? "Escrow Masuk"
+                                                            : "Refund"}
                                             </span>
                                         </td>
                                         <td className="py-4 pr-4 text-body-sm text-primary-800">
-                                            {tx.projectName || "-"}
+                                            {tx.projectName}
                                         </td>
                                         <td className="py-4 pr-4 text-body-sm text-primary-800">
-                                            {tx.currency === "IDR"
-                                                ? formatIdr(tx.amount)
-                                                : formatUsd(tx.amount)}
+                                            IDR {tx.amount.toLocaleString()}
                                         </td>
                                         <td className="py-4">
                                             <StatusBadge
                                                 status={
-                                                    tx.status === "success"
+                                                    tx.status === "confirmed"
                                                         ? "success"
-                                                        : tx.status === "processing"
+                                                        : tx.status === "pending" || tx.status === "processing"
                                                             ? "warning"
-                                                            : tx.status === "pending"
-                                                                ? "info"
-                                                                : "error"
+                                                            : "error"
                                                 }
                                                 label={
-                                                    tx.status === "success"
+                                                    tx.status === "confirmed"
                                                         ? "Berhasil"
-                                                        : tx.status === "processing"
+                                                        : tx.status === "pending"
                                                             ? "Diproses"
-                                                            : tx.status === "pending"
-                                                                ? "Menunggu"
+                                                            : tx.status === "processing"
+                                                                ? "Diproses"
                                                                 : "Gagal"
                                                 }
                                             />
@@ -385,10 +340,10 @@ export default function TalentFinance() {
                         <FileText className="w-5 h-5 text-primary-600" />
                         <div>
                             <h3 className="text-h4 text-primary-900">
-                                Laporan Pajak {new Date().getFullYear()}
+                                Laporan Pajak 2026
                             </h3>
                             <p className="text-body-sm text-neutral-500">
-                                Total pendapatan: {formatIdr(wallet?.totalEarned || 0)}
+                                Total pendapatan: IDR {(balance?.totalEarned || 0).toLocaleString()}
                             </p>
                         </div>
                     </div>

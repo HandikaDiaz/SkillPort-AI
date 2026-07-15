@@ -175,13 +175,14 @@ export const disputeSchema = {
 };
 
 export const escrowTransactionSchema = {
-    projectId: v.id("projects"),
+    userId: v.id("users"),
+    projectId: v.optional(v.id("projects")),
     projectName: v.string(),
-    type: v.union(v.literal("deposit"), v.literal("release"), v.literal("refund")),
+    type: v.union(v.literal("deposit"), v.literal("release"), v.literal("refund"), v.literal("withdrawal")),
     amount: v.number(),
     currency: v.string(),
-    status: v.union(v.literal("confirmed"), v.literal("pending"), v.literal("failed")),
-    transactionHash: v.string(),
+    status: v.union(v.literal("confirmed"), v.literal("pending"), v.literal("failed"), v.literal("processing")),
+    transactionHash: v.optional(v.string()),
     createdAt: v.number(),
 };
 
@@ -384,11 +385,15 @@ const projectTables = {
         .index("conversationId", ["conversationId"])
         .index("conversationIdCreatedAt", ["conversationId", "createdAt"]),
     disputes: defineTable(disputeSchema).index("projectId", ["projectId"]),
-    escrowTransactions: defineTable(escrowTransactionSchema).index("projectId", ["projectId"]),
     talentProfiles: defineTable(talentProfileSchema).index("userId", ["userId"]),
 };
 
 const financeTables = {
+    escrowTransactions: defineTable(escrowTransactionSchema)
+        .index("projectId", ["projectId"])
+        .index("userId", ["userId"])
+        .index("projectIdCreatedAt", ["projectId", "createdAt"])
+        .index("userIdCreatedAt", ["userId", "createdAt"]),
     wallets: defineTable(walletSchema).index("userId", ["userId"]),
     transactions: defineTable(transactionSchema)
         .index("userId", ["userId"])

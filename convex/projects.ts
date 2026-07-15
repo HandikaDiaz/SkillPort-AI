@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { query } from "./_generated/server";
+import { query, mutation } from "./_generated/server";
 
 export const getByClient = query({
     args: { clientId: v.id("users") },
@@ -18,6 +18,17 @@ export const getByTalent = query({
             .query("projects")
             .withIndex("talentId", (q) => q.eq("talentId", talentId))
             .collect();
+    },
+});
+
+export const getByParticipant = query({
+    args: { userId: v.string() },
+    handler: async (ctx, { userId }) => {
+        const allProjects = await ctx.db.query("projects").collect();
+
+        return allProjects.filter(
+            (p) => p.clientId === userId || p.talentId === userId
+        );
     },
 });
 
@@ -45,5 +56,91 @@ export const getByocInvites = query({
             .query("projects")
             .filter((q) => q.and(q.eq(q.field("talentId"), talentId), q.eq(q.field("isByoc"), true)))
             .collect();
+    },
+});
+
+export const getByClientWithFilter = query({
+    args: {
+        clientId: v.id("users"),
+        status: v.optional(v.string()),
+        search: v.optional(v.string()),
+    },
+    handler: async (ctx, { clientId, status, search }) => {
+        let projects = await ctx.db
+            .query("projects")
+            .withIndex("clientId", (q) => q.eq("clientId", clientId))
+            .collect();
+
+        if (status && status !== "all") {
+            projects = projects.filter((p) => p.status === status);
+        }
+
+        if (search) {
+            const searchLower = search.toLowerCase();
+            projects = projects.filter((p) =>
+                p.title.toLowerCase().includes(searchLower)
+            );
+        }
+
+        return projects;
+    },
+});
+
+export const create = mutation({
+    args: {
+        title: v.string(),
+        description: v.string(),
+        category: v.string(),
+        budget: v.number(),
+        currency: v.string(),
+        clientId: v.id("users"),
+        clientName: v.string(),
+        clientAvatar: v.optional(v.string()),
+        deadline: v.number(),
+        milestones: v.array(
+            v.object({
+                title: v.string(),
+                description: v.string(),
+                amount: v.number(),
+                deadline: v.number(),
+            })
+        ),
+    },
+    handler: async (ctx, args) => {
+        const projectId = await ctx.db.insert("projects", {
+            ...args,
+            status: "draft",
+            escrowStatus: "pending_deposit",
+            isByoc: false,
+            createdAt: Date.now(),
+        });
+
+        for (const m of args.milestones) {
+            await ctx.db.insert("milestones", {
+                ...m,
+                projectId,
+                status: "pending",
+            });
+        }
+
+        return projectId;
+    },
+});
+
+export const updateStatus = mutation({
+    args: {
+        projectId: v.id("projects"),
+        status: v.union(
+            v.literal("draft"),
+            v.literal("open"),
+            v.literal("active"),
+            v.literal("completed"),
+            v.literal("disputed"),
+            v.literal("cancelled")
+        ),
+    },
+    handler: async (ctx, { projectId, status }) => {
+        await ctx.db.patch(projectId, { status });
+        return projectId;
     },
 });

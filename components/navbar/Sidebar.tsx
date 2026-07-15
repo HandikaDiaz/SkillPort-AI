@@ -1,23 +1,23 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useSession, signOut } from "next-auth/react";
 import {
-    LayoutDashboard,
-    FolderKanban,
-    Wallet,
-    Users,
-    MessageSquare,
-    Settings,
-    Award,
-    Mail,
-    HelpCircle,
     AlertTriangle,
-    LogOut,
+    Award,
     ChevronLeft,
     ChevronRight,
+    FolderKanban,
+    HelpCircle,
+    LayoutDashboard,
+    LogOut,
+    Mail,
+    MessageSquare,
+    Settings,
+    Users,
+    Wallet,
 } from "lucide-react";
+import { signOut } from "next-auth/react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 const clientNavItems = [
@@ -48,14 +48,13 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ role }: SidebarProps) {
-    const pathname = usePathname(); // ✅ Next.js: usePathname
-    const { data: session } = useSession(); // ✅ NextAuth session
+    const pathname = usePathname();
     const [collapsed, setCollapsed] = useState(false);
 
     const navItems = role === "client" ? clientNavItems : talentNavItems;
 
     const handleLogout = async () => {
-        await signOut({ callbackUrl: "/" }); // ✅ NextAuth signOut
+        await signOut({ callbackUrl: "/" });
     };
 
     return (
@@ -67,21 +66,21 @@ export default function Sidebar({ role }: SidebarProps) {
                 <div className="flex-1 py-4">
                     <nav className="space-y-1 px-2">
                         {navItems.map((item) => {
-                            const isActive = pathname === item.href; // ✅ usePathname
+                            const isActive = pathname === item.href;
                             return (
                                 <Link
                                     key={item.label}
-                                    href={item.href} // ✅ Next.js: href (bukan to)
+                                    href={item.href}
                                     className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${isActive
-                                            ? "bg-primary-900 text-white"
-                                            : "text-primary-700 hover:bg-neutral-100"
+                                        ? "bg-primary-900 text-white"
+                                        : "text-primary-700 hover:bg-neutral-100"
                                         } ${collapsed ? "justify-center" : ""}`}
                                     title={collapsed ? item.label : undefined}
                                 >
                                     <item.icon
                                         className={`w-5 h-5 flex-shrink-0 ${isActive
-                                                ? "text-white"
-                                                : "text-primary-500 group-hover:text-primary-700"
+                                            ? "text-white"
+                                            : "text-primary-500 group-hover:text-primary-700"
                                             }`}
                                     />
                                     {!collapsed && (
@@ -108,15 +107,15 @@ export default function Sidebar({ role }: SidebarProps) {
                                     key={item.label}
                                     href={item.href}
                                     className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${isActive
-                                            ? "bg-primary-900 text-white"
-                                            : "text-primary-700 hover:bg-neutral-100"
+                                        ? "bg-primary-900 text-white"
+                                        : "text-primary-700 hover:bg-neutral-100"
                                         } ${collapsed ? "justify-center" : ""}`}
                                     title={collapsed ? item.label : undefined}
                                 >
                                     <item.icon
                                         className={`w-5 h-5 flex-shrink-0 ${isActive
-                                                ? "text-white"
-                                                : "text-primary-500 group-hover:text-primary-700"
+                                            ? "text-white"
+                                            : "text-primary-500 group-hover:text-primary-700"
                                             }`}
                                     />
                                     {!collapsed && (
