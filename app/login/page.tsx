@@ -3,10 +3,17 @@ import { redirect } from "next/navigation";
 import { GoogleSignInButton, GitHubSignInButton } from "@/components/auth/AuthButtons";
 import Link from "next/link";
 
-export default async function LoginPage() {
+export default async function LoginPage(props: {
+    searchParams: Promise<{ role?: string }>;
+}) {
+    const searchParams = await props.searchParams;
+    const role = searchParams.role;
     const session = await auth();
 
     if (session) {
+        if (role) {
+            redirect(`/?role=${role}/dashboard`);
+        }
         redirect("/");
     }
 

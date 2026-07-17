@@ -118,9 +118,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         error: "/login",
     },
     callbacks: {
-        async jwt({ token, user }) {
+        async jwt({ token, user, trigger, session }) {
             if (user) {
                 token.sub = user.id;
+                token.role = (user as any).role;
+            }
+            if (trigger === "update" && session?.role) {
+                token.role = session.role;
             }
             return token;
         },
@@ -135,6 +139,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     user: {
                         ...session.user,
                         id: token.sub!,
+                        role: token.role as "client" | "talent" | undefined,
                     },
                 };
             } catch (error) {
@@ -145,6 +150,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     user: {
                         ...session.user,
                         id: token.sub!,
+                        role: token.role as "client" | "talent" | undefined,
                     },
                 };
             }
@@ -161,6 +167,16 @@ declare module "next-auth" {
             name?: string | null;
             email?: string | null;
             image?: string | null;
+            role?: "client" | "talent" | null;
         };
+    }
+    interface User {
+        role?: "client" | "talent" | null;
+    }
+}
+
+declare module "@auth/core/jwt" {
+    interface JWT {
+        role?: "client" | "talent" | null;
     }
 }

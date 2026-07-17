@@ -21,18 +21,18 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 const clientNavItems = [
-    { label: "Dashboard", icon: LayoutDashboard, href: "/client" },
+    { label: "Dashboard", icon: LayoutDashboard, href: "/client/dashboard" },
     { label: "Proyek", icon: FolderKanban, href: "/client/projects" },
     { label: "Keuangan", icon: Wallet, href: "/client/finance" },
     { label: "Talenta", icon: Users, href: "#" },
-    { label: "Pesan", icon: MessageSquare, href: "/client/messages" },
+    { label: "Pesan", icon: MessageSquare, href: "/messages" },
     { label: "Pengaturan", icon: Settings, href: "/client/settings" },
 ];
 
 const talentNavItems = [
-    { label: "Dashboard", icon: LayoutDashboard, href: "/talent" },
+    { label: "Dashboard", icon: LayoutDashboard, href: "/talent/dashboard" },
     { label: "Proyek", icon: FolderKanban, href: "/talent/projects" },
-    { label: "Keuangan", icon: Wallet, href: "/talent/finance" },
+    { label: "Keuangan", icon: Wallet, href: "/talent/finances" },
     { label: "Credential", icon: Award, href: "/talent/credentials" },
     { label: "BYOC", icon: Mail, href: "/talent/byoc" },
     { label: "Pengaturan", icon: Settings, href: "/talent/settings" },

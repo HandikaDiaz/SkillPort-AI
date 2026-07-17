@@ -11,6 +11,7 @@ interface ChatWindowProps {
     currentUserId: string;
     currentUserName: string;
     currentUserImage: string;
+    userRole?: "client" | "talent";
 }
 
 export default function ChatWindow({
@@ -18,6 +19,7 @@ export default function ChatWindow({
     currentUserId,
     currentUserName,
     currentUserImage,
+    userRole,
 }: ChatWindowProps) {
     const [message, setMessage] = useState("");
     const messagesEndRef = useRef<HTMLDivElement>(null);

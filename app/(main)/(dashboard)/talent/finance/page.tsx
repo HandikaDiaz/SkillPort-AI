@@ -285,7 +285,7 @@ export default function TalentFinance() {
                                             <span
                                                 className={`inline-flex px-2 py-1 rounded-full text-caption font-medium ${tx.type === "withdrawal" || tx.type === "release"
                                                         ? "bg-info-light text-info"
-                                                        : tx.type === "deposit" || tx.type === "escrow"
+                                                        : tx.type === "deposit"
                                                             ? "bg-success-light text-success"
                                                             : "bg-error-light text-error"
                                                     }`}

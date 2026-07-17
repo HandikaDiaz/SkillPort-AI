@@ -60,3 +60,21 @@ export const getPasswordHash = query({
         return password?.hash ?? null;
     },
 });
+
+export const getById = query({
+    args: { id: v.id("users") },
+    handler: async (ctx, { id }) => {
+        return await ctx.db.get(id);
+    },
+});
+
+export const updateRole = mutation({
+    args: {
+        id: v.id("users"),
+        role: v.union(v.literal("client"), v.literal("talent")),
+    },
+    handler: async (ctx, { id, role }) => {
+        await ctx.db.patch(id, { role });
+        return id;
+    },
+});

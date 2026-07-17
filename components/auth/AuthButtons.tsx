@@ -4,14 +4,24 @@ import { signIn, signOut } from "next-auth/react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
-export function GoogleSignInButton({ callbackUrl }: { callbackUrl?: string }) {
+export function GoogleSignInButton({ callbackUrl, role: propRole }: { callbackUrl?: string; role?: string | null }) {
     const [isLoading, setIsLoading] = useState(false);
+    const searchParams = useSearchParams();
+    const urlRole = searchParams.get("role");
+    const role = propRole !== undefined ? propRole : urlRole;
 
     const handleSignIn = async () => {
         setIsLoading(true);
         try {
-            await signIn("google", { callbackUrl: callbackUrl ?? "/" });
+            let finalCallbackUrl = callbackUrl || "/proxy";
+            if (role) {
+                const url = new URL(finalCallbackUrl, window.location.origin);
+                url.searchParams.set("role", role);
+                finalCallbackUrl = url.pathname + url.search;
+            }
+            await signIn("google", { callbackUrl: finalCallbackUrl });
         } catch (error) {
             console.error("Google sign in failed:", error);
             setIsLoading(false);
@@ -52,13 +62,22 @@ export function GoogleSignInButton({ callbackUrl }: { callbackUrl?: string }) {
     );
 }
 
-export function GitHubSignInButton({ callbackUrl }: { callbackUrl?: string }) {
+export function GitHubSignInButton({ callbackUrl, role: propRole }: { callbackUrl?: string; role?: string | null }) {
     const [isLoading, setIsLoading] = useState(false);
+    const searchParams = useSearchParams();
+    const urlRole = searchParams.get("role");
+    const role = propRole !== undefined ? propRole : urlRole;
 
     const handleSignIn = async () => {
         setIsLoading(true);
         try {
-            await signIn("github", { callbackUrl: callbackUrl ?? "/" });
+            let finalCallbackUrl = callbackUrl || "/proxy";
+            if (role) {
+                const url = new URL(finalCallbackUrl, window.location.origin);
+                url.searchParams.set("role", role);
+                finalCallbackUrl = url.pathname + url.search;
+            }
+            await signIn("github", { callbackUrl: finalCallbackUrl });
         } catch (error) {
             console.error("GitHub sign in failed:", error);
             setIsLoading(false);

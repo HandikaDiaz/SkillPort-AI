@@ -54,10 +54,11 @@ export const ConvexAdapter: Adapter = {
         );
     },
     async getAccount(providerAccountId, provider) {
-        return await callQuery(api.authAdapter.getAccount, {
+        const result = await callQuery(api.authAdapter.getAccount, {
             provider,
             providerAccountId,
         });
+        return maybeAccountFromDB(result);
     },
     async getAuthenticator(credentialID) {
         return await callQuery(api.authAdapter.getAuthenticator, { credentialID });
@@ -89,7 +90,8 @@ export const ConvexAdapter: Adapter = {
         );
     },
     async linkAccount(account: Account) {
-        return await callMutation(api.authAdapter.linkAccount, { account });
+        await callMutation(api.authAdapter.linkAccount, { account: toDB(account) });
+        return account;
     },
     async listAuthenticatorsByUserId(userId: Id<"users">) {
         return await callQuery(api.authAdapter.listAuthenticatorsByUserId, {
@@ -97,12 +99,11 @@ export const ConvexAdapter: Adapter = {
         });
     },
     async unlinkAccount({ provider, providerAccountId }) {
-        return (
-            (await callMutation(api.authAdapter.unlinkAccount, {
-                provider,
-                providerAccountId,
-            })) ?? undefined
-        );
+        const result = await callMutation(api.authAdapter.unlinkAccount, {
+            provider,
+            providerAccountId,
+        });
+        return result ? accountFromDB(result) : undefined;
     },
     async updateAuthenticatorCounter(credentialID, newCounter) {
         return await callMutation(api.authAdapter.updateAuthenticatorCounter, {
@@ -130,6 +131,26 @@ export const ConvexAdapter: Adapter = {
 };
 
 /// Helpers
+function accountFromDB(account: Doc<"accounts">): Account {
+    return {
+        userId: account.userId,
+        type: account.type,
+        provider: account.provider,
+        providerAccountId: account.providerAccountId,
+        refresh_token: account.refresh_token,
+        access_token: account.access_token,
+        expires_at: account.expires_at,
+        token_type: account.token_type?.toLowerCase() as Lowercase<string> | undefined,
+        scope: account.scope,
+        id_token: account.id_token,
+        session_state: account.session_state,
+    };
+}
+
+function maybeAccountFromDB(account: Doc<"accounts"> | null): Account | null {
+    if (account === null) return null;
+    return accountFromDB(account);
+}
 
 function callQuery<Query extends FunctionReference<"query">>(
     query: Query,

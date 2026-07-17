@@ -55,8 +55,6 @@ export default function ClientSettings() {
                 title,
                 bio,
                 location,
-                company,
-                website,
             });
             setSaved(true);
             setTimeout(() => setSaved(false), 2000);

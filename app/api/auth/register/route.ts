@@ -16,7 +16,7 @@ export async function POST(req: Request) {
 
         const hashedPassword = await bcrypt.hash(password, 12);
 
-        const userId = await fetchMutation(api.user.create, {
+        const userId = await fetchMutation(api.users.create, {
             name,
             email,
             emailVerified: Date.now(),
