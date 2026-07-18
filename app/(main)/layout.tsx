@@ -10,7 +10,19 @@ export default async function MainLayout({
 
     return (
         <div className="min-h-screen flex flex-col bg-neutral-50">
-            <Navbar user={session?.user} />
+            <Navbar
+                user={
+                    session?.user
+                        ? {
+                              id: (session.user as any).id ?? null,
+                              name: session.user.name,
+                              email: session.user.email,
+                              image: session.user.image,
+                              role: (session.user as any).role ?? null,
+                          }
+                        : undefined
+                }
+            />
             <div className="pt-16 flex-1 flex flex-col">
                 {children}
             </div>

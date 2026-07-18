@@ -13,15 +13,29 @@ interface DashboardWidgetProps {
 const colorStyles = {
     primary: 'bg-primary-900 text-white',
     secondary: 'bg-secondary-50 text-secondary-900 border border-secondary-200',
-    warning: 'bg-warning-light text-warning-900 border border-warning-200',
-    error: 'bg-error-light text-error-900 border border-error-200',
+    warning: 'bg-amber-50 text-amber-900 border border-amber-200',
+    error: 'bg-red-50 text-red-900 border border-red-200',
 };
 
 const iconColors = {
     primary: 'text-white/80',
     secondary: 'text-secondary-600',
-    warning: 'text-warning-600',
-    error: 'text-error-600',
+    warning: 'text-amber-600',
+    error: 'text-red-600',
+};
+
+const labelColors = {
+    primary: 'text-white/70',
+    secondary: 'text-secondary-700/70',
+    warning: 'text-amber-700/70',
+    error: 'text-red-700/70',
+};
+
+const subtitleColors = {
+    primary: 'text-white/60',
+    secondary: 'text-secondary-600/60',
+    warning: 'text-amber-700/60',
+    error: 'text-red-700/60',
 };
 
 export default function DashboardWidget({ title, value, subtitle, icon: Icon, trend, color = 'primary' }: DashboardWidgetProps) {
@@ -57,12 +71,12 @@ export default function DashboardWidget({ title, value, subtitle, icon: Icon, tr
     return (
         <div className={`rounded-xl p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover ${colorStyles[color]}`}>
             <div className="flex items-start justify-between mb-3">
-                <span className={`text-body-sm font-medium ${color === 'primary' ? 'text-white/70' : 'opacity-70'}`}>{title}</span>
+                <span className={`text-body-sm font-medium ${labelColors[color]}`}>{title}</span>
                 <Icon className={`w-5 h-5 ${iconColors[color]}`} />
             </div>
             <div className="text-data-lg leading-none mb-1">{displayString}</div>
             {subtitle && (
-                <p className={`text-body-sm ${color === 'primary' ? 'text-white/60' : 'opacity-60'}`}>{subtitle}</p>
+                <p className={`text-body-sm ${subtitleColors[color]}`}>{subtitle}</p>
             )}
             {trend && (
                 <span className={`inline-flex items-center gap-1 text-caption font-medium mt-2 ${trend.isPositive ? 'text-success' : 'text-error'}`}>

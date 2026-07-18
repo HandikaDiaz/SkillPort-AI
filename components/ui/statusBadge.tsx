@@ -9,19 +9,19 @@ interface StatusBadgeProps {
 }
 
 const statusStyles = {
-    success: 'bg-success-light text-success-700 border border-success-200',
-    warning: 'bg-warning-light text-warning-700 border border-warning-200',
-    error: 'bg-error-light text-error-700 border border-error-200',
-    info: 'bg-info-light text-info border border-info/20',
-    neutral: 'bg-neutral-100 text-neutral-600 border border-neutral-200',
+    success: 'bg-emerald-100 text-emerald-700 border border-emerald-200',
+    warning: 'bg-amber-100 text-amber-700 border border-amber-200',
+    error: 'bg-red-100 text-red-700 border border-red-200',
+    info: 'bg-sky-100 text-sky-700 border border-sky-200',
+    neutral: 'bg-gray-100 text-gray-600 border border-gray-200',
 };
 
 const dotStyles = {
-    success: 'bg-success',
-    warning: 'bg-warning',
-    error: 'bg-error',
-    info: 'bg-info',
-    neutral: 'bg-neutral-400',
+    success: 'bg-emerald-500',
+    warning: 'bg-amber-500',
+    error: 'bg-red-500',
+    info: 'bg-sky-500',
+    neutral: 'bg-gray-400',
 };
 
 export default function StatusBadge({ status, label, icon: Icon, className }: StatusBadgeProps) {

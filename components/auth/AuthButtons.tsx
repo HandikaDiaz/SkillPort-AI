@@ -15,7 +15,7 @@ export function GoogleSignInButton({ callbackUrl, role: propRole }: { callbackUr
     const handleSignIn = async () => {
         setIsLoading(true);
         try {
-            let finalCallbackUrl = callbackUrl || "/proxy";
+            let finalCallbackUrl = callbackUrl || "/dashboard";
             if (role) {
                 const url = new URL(finalCallbackUrl, window.location.origin);
                 url.searchParams.set("role", role);
@@ -71,7 +71,7 @@ export function GitHubSignInButton({ callbackUrl, role: propRole }: { callbackUr
     const handleSignIn = async () => {
         setIsLoading(true);
         try {
-            let finalCallbackUrl = callbackUrl || "/proxy";
+            let finalCallbackUrl = callbackUrl || "/dashboard";
             if (role) {
                 const url = new URL(finalCallbackUrl, window.location.origin);
                 url.searchParams.set("role", role);

@@ -3,21 +3,94 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import {
     Send,
     Sparkles,
     ChevronRight,
+    Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/utils";
 import StatusBadge from "@/components/ui/statusBadge";
 
+function ProjectCard({ project }: { project: { _id: string; title: string; clientName: string; budget: number; currency: string; status: string } }) {
+    const router = useRouter();
+    const milestones = useQuery(api.milestones.getByProject, { projectId: project._id as any });
+    const completedMilestones = milestones?.filter((m) => m.status === "approved").length || 0;
+    const isCompleted = project.status === "completed";
+
+    return (
+        <div
+            className={`bg-white rounded-xl border border-neutral-200 hover:border-neutral-300 transition-all p-5 ${isCompleted ? "bg-success-light/30" : "border-l-4 border-l-secondary-500"
+                }`}
+        >
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                        <StatusBadge
+                            status={isCompleted ? "success" : project.status === "active" ? "success" : "warning"}
+                            label={isCompleted ? "Selesai" : project.status === "active" ? "Aktif" : "Menunggu"}
+                        />
+                        <span className="text-caption text-neutral-500">{project.clientName}</span>
+                    </div>
+                    <h3 className="text-h4 text-primary-900 mb-1">{project.title}</h3>
+                    <p className="text-body-sm text-neutral-500">{formatCurrency(project.budget, project.currency)}</p>
+                </div>
+
+                <div className="flex items-center gap-4">
+                    {!isCompleted && milestones && (
+                        <div className="flex items-center gap-2">
+                            <div className="flex gap-1">
+                                {milestones.map((m, i) => (
+                                    <div
+                                        key={i}
+                                        className={`w-2.5 h-2.5 rounded-full ${m.status === "approved"
+                                            ? "bg-secondary-500"
+                                            : m.status === "submitted"
+                                                ? "bg-warning"
+                                                : m.status === "in_progress"
+                                                    ? "bg-info"
+                                                    : "bg-neutral-300"
+                                            }`}
+                                    />
+                                ))}
+                            </div>
+                            <span className="text-caption text-neutral-500">
+                                {completedMilestones}/{milestones.length}
+                            </span>
+                        </div>
+                    )}
+
+                    {project.status === "active" && (
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            className="border-secondary-500 text-secondary-700 hover:bg-secondary-50"
+                        >
+                            <Send className="w-3.5 h-3.5 mr-1" /> Submit
+                        </Button>
+                    )}
+
+                    <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => router.push(`/talent/projects/${project._id}`)}
+                    >
+                        Detail <ChevronRight className="w-4 h-4 ml-1" />
+                    </Button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default function TalentProjects() {
     const router = useRouter();
     const { data: session } = useSession();
     const [activeTab, setActiveTab] = useState("available");
+    const [applyingId, setApplyingId] = useState<string | null>(null);
 
     const tabs = [
         { id: "available", label: "Proyek Tersedia" },
@@ -31,9 +104,11 @@ export default function TalentProjects() {
         session?.user?.id ? { talentId: session.user.id as any } : "skip"
     );
     const byocInvites = useQuery(
-        api.projects.getByocInvites,
+        api.byocInvites.getByTalent,
         session?.user?.id ? { talentId: session.user.id as any } : "skip"
     );
+
+    const applyToProject = useMutation(api.projects.applyToProject);
 
     const isLoading = {
         available: availableProjects === undefined,
@@ -41,10 +116,30 @@ export default function TalentProjects() {
         byoc: byocInvites === undefined,
     };
 
+    console.log(availableProjects, "is loadin");
+
+
+    const handleApply = async (projectId: string) => {
+        if (!session?.user?.id) return;
+        setApplyingId(projectId);
+        try {
+            await applyToProject({
+                projectId: projectId as any,
+                talentId: session.user.id as any,
+                talentName: session.user.name || "Talent",
+                talentAvatar: session.user.image || undefined,
+            });
+        } catch (err) {
+            console.error("Gagal melamar proyek:", err);
+        } finally {
+            setApplyingId(null);
+        }
+    };
+
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-h1 text-primary-900">Proyek & Peluang</h1>
+                <h1 className="text-h1 text-primary-900">Proyek &amp; Peluang</h1>
                 <p className="text-body text-neutral-500 mt-1">
                     Temukan dan kelola proyek Anda.
                 </p>
@@ -65,13 +160,10 @@ export default function TalentProjects() {
                 ))}
             </div>
 
+            {/* Tab: Proyek Tersedia */}
             {activeTab === "available" && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    {isLoading.available ? (
-                        <div className="col-span-2 text-center py-12 text-neutral-500">
-                            Memuat proyek...
-                        </div>
-                    ) : availableProjects?.length === 0 ? (
+                    {availableProjects?.length === undefined ? (
                         <div className="col-span-2 text-center py-12 text-neutral-500">
                             Belum ada proyek tersedia
                         </div>
@@ -96,8 +188,9 @@ export default function TalentProjects() {
                                 <div className="flex items-center gap-2 mb-4">
                                     <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-secondary-50 text-secondary-700 text-caption font-medium">
                                         <Sparkles className="w-3 h-3" />
-                                        85% cocok
+                                        {project.category}
                                     </span>
+                                    <span className="text-caption text-neutral-400">{project.clientName}</span>
                                 </div>
 
                                 <div className="flex items-center justify-between pt-3 border-t border-neutral-100">
@@ -107,7 +200,12 @@ export default function TalentProjects() {
                                     <Button
                                         size="sm"
                                         className="bg-secondary-500 hover:bg-secondary-600 text-white"
+                                        disabled={applyingId === project._id}
+                                        onClick={() => handleApply(project._id)}
                                     >
+                                        {applyingId === project._id ? (
+                                            <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" />
+                                        ) : null}
                                         Ajukan Proposal
                                     </Button>
                                 </div>
@@ -117,127 +215,28 @@ export default function TalentProjects() {
                 </div>
             )}
 
+            {/* Tab: Proyek Saya */}
             {activeTab === "mine" && (
                 <div className="space-y-4">
-                    {isLoading.mine ? (
-                        <div className="text-center py-12 text-neutral-500">
-                            Memuat proyek...
-                        </div>
-                    ) : myProjects?.length === 0 ? (
+                    {myProjects?.length === undefined ? (
                         <div className="text-center py-12 text-neutral-500">
                             Belum ada proyek yang Anda ambil
                         </div>
                     ) : (
-                        myProjects?.map((project) => {
-                            const milestones = useQuery(
-                                api.milestones.getByProject,
-                                { projectId: project._id }
-                            );
-
-                            const completedMilestones =
-                                milestones?.filter((m) => m.status === "approved").length || 0;
-                            const isCompleted = project.status === "completed";
-
-                            return (
-                                <div
-                                    key={project._id}
-                                    className={`bg-white rounded-xl border border-neutral-200 hover:border-neutral-300 transition-all p-5 ${isCompleted
-                                        ? "bg-success-light/30"
-                                        : "border-l-4 border-l-secondary-500"
-                                        }`}
-                                >
-                                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                                        <div className="flex-1">
-                                            <div className="flex items-center gap-3 mb-2">
-                                                <StatusBadge
-                                                    status={
-                                                        isCompleted
-                                                            ? "success"
-                                                            : project.status === "active"
-                                                                ? "success"
-                                                                : "warning"
-                                                    }
-                                                    label={
-                                                        isCompleted
-                                                            ? "Selesai"
-                                                            : project.status === "active"
-                                                                ? "Aktif"
-                                                                : "Menunggu"
-                                                    }
-                                                />
-                                                <span className="text-caption text-neutral-500">
-                                                    {project.clientName}
-                                                </span>
-                                            </div>
-                                            <h3 className="text-h4 text-primary-900 mb-1">
-                                                {project.title}
-                                            </h3>
-                                            <p className="text-body-sm text-neutral-500">
-                                                {formatCurrency(project.budget, project.currency)}
-                                            </p>
-                                        </div>
-
-                                        <div className="flex items-center gap-4">
-                                            {!isCompleted && milestones && (
-                                                <div className="flex items-center gap-2">
-                                                    <div className="flex gap-1">
-                                                        {milestones.map((m, i) => (
-                                                            <div
-                                                                key={i}
-                                                                className={`w-2.5 h-2.5 rounded-full ${m.status === "approved"
-                                                                    ? "bg-secondary-500"
-                                                                    : m.status === "submitted"
-                                                                        ? "bg-warning"
-                                                                        : m.status === "in_progress"
-                                                                            ? "bg-info"
-                                                                            : "bg-neutral-300"
-                                                                    }`}
-                                                            />
-                                                        ))}
-                                                    </div>
-                                                    <span className="text-caption text-neutral-500">
-                                                        {completedMilestones}/{milestones.length}
-                                                    </span>
-                                                </div>
-                                            )}
-
-                                            {project.status === "active" && (
-                                                <Button
-                                                    size="sm"
-                                                    variant="outline"
-                                                    className="border-secondary-500 text-secondary-700 hover:bg-secondary-50"
-                                                >
-                                                    <Send className="w-3.5 h-3.5 mr-1" /> Submit
-                                                </Button>
-                                            )}
-
-                                            <Button
-                                                size="sm"
-                                                variant="ghost"
-                                                onClick={() =>
-                                                    router.push(`/talent/projects/${project._id}`)
-                                                }
-                                            >
-                                                Detail <ChevronRight className="w-4 h-4 ml-1" />
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })
+                        myProjects?.map((project) => (
+                            <ProjectCard key={project._id} project={project} />
+                        ))
                     )}
                 </div>
             )}
 
-            {/* BYOC Invites */}
+            {/* Tab: BYOC Invites */}
             {activeTab === "byoc" && (
                 <div className="space-y-6">
                     <div className="bg-primary-900 rounded-xl p-6">
-                        <h2 className="text-h3 text-white mb-2">
-                            BYOC: Undang Klien Anda Sendiri
-                        </h2>
+                        <h2 className="text-h3 text-white mb-2">BYOC: Undang Klien Anda Sendiri</h2>
                         <p className="text-body-sm text-primary-300 mb-4">
-                            Biaya hanya 1.25% — hemat hingga 90% fee platform.
+                            Biaya hanya 5% — hemat hingga 90% fee platform.
                         </p>
                         <Button
                             onClick={() => router.push("/talent/byoc")}
@@ -249,14 +248,8 @@ export default function TalentProjects() {
 
                     <div className="bg-white rounded-xl border border-neutral-200 p-6">
                         <h3 className="text-h4 text-primary-900 mb-4">Riwayat BYOC</h3>
-                        {isLoading.byoc ? (
-                            <div className="text-center py-8 text-neutral-500">
-                                Memuat...
-                            </div>
-                        ) : byocInvites?.length === 0 ? (
-                            <div className="text-center py-8 text-neutral-500">
-                                Belum ada BYOC invite
-                            </div>
+                        {byocInvites?.length === undefined ? (
+                            <div className="text-center py-8 text-neutral-500">Belum ada BYOC invite</div>
                         ) : (
                             <div className="space-y-3">
                                 {byocInvites?.map((invite) => (
@@ -266,23 +259,17 @@ export default function TalentProjects() {
                                     >
                                         <div>
                                             <p className="text-body-sm font-medium text-primary-800">
-                                                {invite.title}
+                                                {invite.projectName}
                                             </p>
-                                            <p className="text-caption text-neutral-500">
-                                                {invite.clientName}
-                                            </p>
+                                            <p className="text-caption text-neutral-500">{invite.clientName}</p>
                                         </div>
                                         <div className="flex items-center gap-3">
                                             <StatusBadge
-                                                status={
-                                                    invite.status === "active" ? "success" : "neutral"
-                                                }
-                                                label={
-                                                    invite.status === "active" ? "Aktif" : "Selesai"
-                                                }
+                                                status={invite.status === "active" ? "success" : "neutral"}
+                                                label={invite.status === "active" ? "Aktif" : invite.status}
                                             />
                                             <span className="text-caption text-neutral-400">
-                                                {new Date(invite.createdAt).toLocaleDateString("id-ID")}
+                                                {new Date(invite.sentAt).toLocaleDateString("id-ID")}
                                             </span>
                                         </div>
                                     </div>

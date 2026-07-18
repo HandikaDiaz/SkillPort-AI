@@ -25,7 +25,7 @@ const FAQS = [
     },
     {
         q: "Berapa biaya untuk klien?",
-        a: "Gratis. Fee 1.25% dari sisi talenta.",
+        a: "Gratis. Fee 5% dari sisi talenta.",
     },
     {
         q: "Apakah ini aman?",
@@ -58,7 +58,7 @@ export default function TalentBYOC() {
 
     const budgetNum = parseFloat(formData.budget) || 5000;
     const otherFee = budgetNum * 0.2;
-    const ourFee = budgetNum * 0.0125;
+    const ourFee = budgetNum * 0.095;
     const savings = otherFee - ourFee;
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -133,7 +133,7 @@ export default function TalentBYOC() {
                     <div className="p-5 rounded-xl bg-secondary-50 border border-secondary-200">
                         <div className="flex items-center justify-between mb-3">
                             <span className="text-body-sm text-neutral-500">SkillPort AI</span>
-                            <span className="text-caption text-secondary-700 font-medium">Fee 1.25%</span>
+                            <span className="text-caption text-secondary-700 font-medium">Fee 5%</span>
                         </div>
                         <p className="text-h3 text-primary-900 mb-1">
                             Proyek {formData.budget ? `$${parseInt(formData.budget).toLocaleString()}` : "$5,000"}
@@ -225,7 +225,7 @@ export default function TalentBYOC() {
                                         setFormData({ ...formData, clientName: e.target.value })
                                     }
                                     placeholder="John Smith"
-                                    className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                    className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                     required
                                 />
                             </div>
@@ -240,7 +240,7 @@ export default function TalentBYOC() {
                                         setFormData({ ...formData, clientEmail: e.target.value })
                                     }
                                     placeholder="john@company.com"
-                                    className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                    className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                     required
                                 />
                             </div>
@@ -256,7 +256,7 @@ export default function TalentBYOC() {
                                     setFormData({ ...formData, projectName: e.target.value })
                                 }
                                 placeholder="Website Redesign"
-                                className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                 required
                             />
                         </div>
@@ -273,7 +273,7 @@ export default function TalentBYOC() {
                                     }
                                     placeholder="5000"
                                     min="100"
-                                    className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                    className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                     required
                                 />
                             </div>
@@ -286,7 +286,7 @@ export default function TalentBYOC() {
                                     onChange={(e) =>
                                         setFormData({ ...formData, milestoneCount: e.target.value })
                                     }
-                                    className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info bg-white"
+                                    className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info bg-white text-primary-700"
                                 >
                                     {[2, 3, 4, 5].map((n) => (
                                         <option key={n} value={n}>
@@ -307,7 +307,7 @@ export default function TalentBYOC() {
                                 }
                                 placeholder="Halo, saya ingin mengajak Anda menggunakan platform escrow SkillPort AI untuk proyek kita..."
                                 rows={3}
-                                className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info resize-none"
+                                className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info resize-none text-primary-700"
                             />
                         </div>
                         <div className="flex items-center gap-2 p-3 rounded-lg bg-info-light border border-info/20">

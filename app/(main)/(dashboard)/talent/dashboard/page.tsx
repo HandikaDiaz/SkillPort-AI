@@ -1,50 +1,30 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { motion } from "framer-motion";
-import {
-    Banknote,
-    FolderKanban,
-    Award,
-    Clock,
-    CheckCircle,
-    AlertTriangle,
-    TrendingUp,
-    Lock,
-    ChevronRight,
-    Plus,
-    Sparkles,
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DashboardWidget from "@/components/ui/dashboardWidget";
 import StatusBadge from "@/components/ui/statusBadge";
-
-// Types untuk milestone dari query
-interface Milestone {
-    _id: string;
-    title: string;
-    status: "pending" | "in_progress" | "submitted" | "approved" | "rejected";
-    deadline: number;
-}
-
-interface ProjectWithMilestones {
-    _id: string;
-    title: string;
-    status: string;
-    budget: number;
-    currency: string;
-    clientName: string;
-    milestones: Milestone[];
-}
+import { api } from "@/convex/_generated/api";
+import { useQuery } from "convex/react";
+import { motion } from "framer-motion";
+import {
+    AlertTriangle,
+    Award,
+    Banknote,
+    ChevronRight,
+    Clock,
+    FolderKanban,
+    Lock,
+    Plus,
+    Sparkles,
+    TrendingUp
+} from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function TalentDashboard() {
     const router = useRouter();
     const { data: session } = useSession();
 
-    // Fetch data dari Convex
     const activeProjects = useQuery(
         api.projects.getByTalentWithMilestones,
         session?.user?.id ? { talentId: session.user.id as any } : "skip"
@@ -58,10 +38,13 @@ export default function TalentDashboard() {
         api.escrow.getBalanceByTalent,
         session?.user?.id ? { talentId: session.user.id as any } : "skip"
     );
+    const credential = useQuery(
+        api.credentials.getByUser,
+        session?.user?.id ? { userId: session.user.id as any } : "skip"
+    );
 
     const userName = session?.user?.name?.split(" ")[0] || "Talent";
 
-    // Hitung urgent milestones dari active projects
     const urgentMilestones = activeProjects?.flatMap((project) =>
         project.milestones
             .filter((m) => m.status === "in_progress" || m.status === "submitted")
@@ -74,7 +57,6 @@ export default function TalentDashboard() {
             }))
     ).slice(0, 3) || [];
 
-    // Loading state
     if (!session) {
         return (
             <div className="flex items-center justify-center h-96">
@@ -116,11 +98,11 @@ export default function TalentDashboard() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
                 <DashboardWidget
                     title="Pendapatan Bulan Ini"
-                    value="IDR 24,500,000"
-                    subtitle="$ 1,568"
+                    value="IDR 0"
+                    subtitle="$ 0"
                     icon={Banknote}
                     color="secondary"
-                    trend={{ value: 15, isPositive: true }}
+                    trend={{ value: 0, isPositive: true }}
                 />
                 <DashboardWidget
                     title="Proyek Aktif"
@@ -140,14 +122,23 @@ export default function TalentDashboard() {
                         <Award className="w-5 h-5 text-secondary-600" />
                     </div>
                     <div className="flex items-baseline gap-1 mb-2">
-                        <span className="text-data-lg text-secondary-700">87</span>
+                        <span className="text-data-lg text-secondary-700">
+                            {credential?.globalScore ?? "—"}
+                        </span>
                         <span className="text-h3 text-neutral-400">/100</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <StatusBadge status="success" label="Verified" />
-                        <span className="text-caption text-secondary-600 flex items-center gap-1">
-                            <TrendingUp className="w-3 h-3" /> +5
-                        </span>
+                        <StatusBadge
+                            status={credential?.isVerified ? "success" : "neutral"}
+                            label={credential?.isVerified ? "Verified" : "Unverified"}
+                        />
+                        {credential?.previousScore !== undefined && credential.globalScore !== undefined && (
+                            <span className="text-caption text-secondary-600 flex items-center gap-1">
+                                <TrendingUp className="w-3 h-3" />
+                                {credential.globalScore - credential.previousScore >= 0 ? "+" : ""}
+                                {credential.globalScore - credential.previousScore}
+                            </span>
+                        )}
                     </div>
                 </div>
             </div>
@@ -173,16 +164,12 @@ export default function TalentDashboard() {
                                 >
                                     <div
                                         className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${m.status === "warning"
-                                                ? "bg-warning-light"
-                                                : m.status === "success"
-                                                    ? "bg-success-light"
-                                                    : "bg-info-light"
+                                            ? "bg-warning-light"
+                                            : "bg-info-light"
                                             }`}
                                     >
                                         {m.status === "warning" ? (
                                             <AlertTriangle className="w-5 h-5 text-warning" />
-                                        ) : m.status === "success" ? (
-                                            <CheckCircle className="w-5 h-5 text-success" />
                                         ) : (
                                             <Clock className="w-5 h-5 text-info" />
                                         )}
@@ -228,7 +215,7 @@ export default function TalentDashboard() {
                                 </span>
                             </div>
                             <p className="text-data text-success mb-1">
-                                USD {escrowBalance?.available || "2,500"}
+                                IDR {(escrowBalance?.available ?? 0).toLocaleString("id-ID")}
                             </p>
                             <p className="text-caption text-neutral-500 mb-3">
                                 Estimasi cair: &lt;30 menit
@@ -251,7 +238,7 @@ export default function TalentDashboard() {
                                 </span>
                             </div>
                             <p className="text-data text-primary-800 mb-1">
-                                USD {escrowBalance?.locked || "3,000"}
+                                IDR {(escrowBalance?.locked ?? 0).toLocaleString("id-ID")}
                             </p>
                             <p className="text-caption text-neutral-500">
                                 2 milestone menunggu submit

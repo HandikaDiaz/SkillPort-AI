@@ -12,6 +12,7 @@ import {
     FileText,
     Building2,
     ArrowRight,
+    Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import StatusBadge from "@/components/ui/statusBadge";
@@ -21,12 +22,19 @@ export default function TalentFinance() {
     const { data: session } = useSession();
     const [withdrawAmount, setWithdrawAmount] = useState("");
 
-    const balance = useQuery(
-        api.finances.getBalance,
+    // Gunakan wallet untuk saldo utama
+    const wallet = useQuery(
+        api.wallets.getByUser,
         session?.user?.id ? { userId: session.user.id as any } : "skip"
     );
+    // Gunakan transactions (tabel terpisah dari escrowTransactions) untuk riwayat
     const transactions = useQuery(
-        api.finances.getTransactions,
+        api.transactions.getByUser,
+        session?.user?.id ? { userId: session.user.id as any } : "skip"
+    );
+    // Rekening bank tersimpan
+    const bankAccounts = useQuery(
+        api.bankAccounts.getByUser,
         session?.user?.id ? { userId: session.user.id as any } : "skip"
     );
 
@@ -54,7 +62,16 @@ export default function TalentFinance() {
         }
     };
 
-    const isLoading = balance === undefined || transactions === undefined;
+    // Buat balance-like object dari wallet agar kompatibel dengan UI yang ada
+    const balance = wallet
+        ? {
+            available: wallet.balance,
+            pending: wallet.pendingSettlement,
+            totalEarned: wallet.totalEarned,
+        }
+        : undefined;
+
+    // const isLoading = wallet === undefined || transactions === undefined;
 
     return (
         <div className="space-y-6">
@@ -75,9 +92,7 @@ export default function TalentFinance() {
                         <Banknote className="w-5 h-5 text-secondary-600" />
                     </div>
                     <p className="text-data-lg text-primary-900">
-                        {isLoading
-                            ? "Memuat..."
-                            : `IDR ${(balance?.available || 0).toLocaleString()}`}
+                        {`IDR ${(balance?.available || 0).toLocaleString()}`}
                     </p>
                     <p className="text-body-sm text-neutral-500 mt-1">
                         $ {((balance?.available || 0) / 15600).toFixed(0)}
@@ -98,9 +113,7 @@ export default function TalentFinance() {
                         <Clock className="w-5 h-5 text-warning" />
                     </div>
                     <p className="text-data-lg text-primary-900">
-                        {isLoading
-                            ? "Memuat..."
-                            : `IDR ${(balance?.pending || 0).toLocaleString()}`}
+                        {`IDR ${(balance?.pending || 0).toLocaleString()}`}
                     </p>
                     <p className="text-body-sm text-neutral-500 mt-1">
                         milestone menunggu approval
@@ -114,9 +127,7 @@ export default function TalentFinance() {
                         <TrendingUp className="w-5 h-5 text-success" />
                     </div>
                     <p className="text-data-lg text-primary-900">
-                        {isLoading
-                            ? "Memuat..."
-                            : `IDR ${(balance?.totalEarned || 0).toLocaleString()}`}
+                        {`IDR ${(balance?.totalEarned || 0).toLocaleString()}`}
                     </p>
                     <p className="text-body-sm text-neutral-500 mt-1">
                         sejak bergabung
@@ -138,10 +149,10 @@ export default function TalentFinance() {
                             <select
                                 value={selectedBank}
                                 onChange={(e) => setSelectedBank(e.target.value)}
-                                className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info bg-white"
+                                className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info bg-white text-primary-700"
                             >
                                 {banks.map((bank) => (
-                                    <option key={bank} value={bank}>
+                                    <option key={bank} value={bank} className="text-primary-700">
                                         {bank}
                                     </option>
                                 ))}
@@ -156,7 +167,7 @@ export default function TalentFinance() {
                                 value={accountNumber}
                                 onChange={(e) => setAccountNumber(e.target.value)}
                                 placeholder="1234 5678 9012"
-                                className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                             />
                         </div>
                         <div>
@@ -168,7 +179,7 @@ export default function TalentFinance() {
                                 value={withdrawAmount}
                                 onChange={(e) => setWithdrawAmount(e.target.value)}
                                 placeholder="Minimal Rp 100,000"
-                                className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                             />
                             <p className="text-caption text-neutral-500 mt-1">
                                 Maksimal: IDR {(balance?.available || 0).toLocaleString()}
@@ -260,13 +271,7 @@ export default function TalentFinance() {
                             </tr>
                         </thead>
                         <tbody>
-                            {isLoading ? (
-                                <tr>
-                                    <td colSpan={5} className="py-8 text-center text-neutral-500">
-                                        Memuat...
-                                    </td>
-                                </tr>
-                            ) : transactions?.length === 0 ? (
+                            {transactions?.length === 0 ? (
                                 <tr>
                                     <td colSpan={5} className="py-8 text-center text-neutral-500">
                                         Belum ada transaksi
@@ -283,18 +288,18 @@ export default function TalentFinance() {
                                         </td>
                                         <td className="py-4 pr-4">
                                             <span
-                                                className={`inline-flex px-2 py-1 rounded-full text-caption font-medium ${tx.type === "withdrawal" || tx.type === "release"
-                                                        ? "bg-info-light text-info"
-                                                        : tx.type === "deposit"
-                                                            ? "bg-success-light text-success"
-                                                            : "bg-error-light text-error"
+                                                className={`inline-flex px-2 py-1 rounded-full text-caption font-medium ${tx.type === "withdrawal" || tx.type === "escrow_release"
+                                                    ? "bg-info-light text-info"
+                                                    : tx.type === "escrow_in"
+                                                        ? "bg-success-light text-success"
+                                                        : "bg-error-light text-error"
                                                     }`}
                                             >
                                                 {tx.type === "withdrawal"
                                                     ? "Pencairan"
-                                                    : tx.type === "release"
+                                                    : tx.type === "escrow_release"
                                                         ? "Escrow Keluar"
-                                                        : tx.type === "deposit"
+                                                        : tx.type === "escrow_in"
                                                             ? "Escrow Masuk"
                                                             : "Refund"}
                                             </span>
@@ -308,14 +313,14 @@ export default function TalentFinance() {
                                         <td className="py-4">
                                             <StatusBadge
                                                 status={
-                                                    tx.status === "confirmed"
+                                                    tx.status === "success"
                                                         ? "success"
                                                         : tx.status === "pending" || tx.status === "processing"
                                                             ? "warning"
                                                             : "error"
                                                 }
                                                 label={
-                                                    tx.status === "confirmed"
+                                                    tx.status === "success"
                                                         ? "Berhasil"
                                                         : tx.status === "pending"
                                                             ? "Diproses"

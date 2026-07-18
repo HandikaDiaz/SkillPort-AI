@@ -39,7 +39,7 @@ export default function HeroSection() {
                         <p className="text-body text-primary-300 mb-8 max-w-lg leading-relaxed">
                             Platform escrow berbasis smart contract. Dana klien terkunci
                             sebelum kerja. Cair ke rekening Rupiah setelah disetujui. Biaya
-                            flat 1.25% — tanpa risiko gagal bayar.
+                            flat 5% — tanpa risiko gagal bayar.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4">
                             <Button
@@ -129,7 +129,7 @@ export default function HeroSection() {
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <p className="text-caption text-secondary-300">Anda Hemat</p>
-                                            <p className="text-h2 text-secondary-400 font-bold">USD 937</p>
+                                            <p className="text-h2 text-secondary-400 font-bold">USD 525</p>
                                             <p className="text-caption text-secondary-300/70">dengan BYOC vs platform lain</p>
                                         </div>
                                         <TrendingDown className="w-12 h-12 text-secondary-400" />

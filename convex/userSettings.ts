@@ -4,10 +4,41 @@ import { query, mutation } from "./_generated/server";
 export const getByUser = query({
     args: { userId: v.id("users") },
     handler: async (ctx, { userId }) => {
-        return await ctx.db
+        const settings = await ctx.db
             .query("userSettings")
             .withIndex("userId", (q) => q.eq("userId", userId))
             .unique();
+
+        // Kembalikan default values jika user belum punya settings
+        if (!settings) {
+            return {
+                userId,
+                displayName: "",
+                title: "",
+                bio: "",
+                location: "",
+                languages: [] as string[],
+                hourlyRate: 0,
+                projectRate: 0,
+                skills: [] as string[],
+                githubUrl: "",
+                behanceUrl: "",
+                dribbbleUrl: "",
+                projectTypes: [] as string[],
+                minBudget: 0,
+                maxBudget: 0,
+                preferredRegions: [] as string[],
+                availability: [] as string[],
+                notifyMilestoneApproved: true,
+                notifyPaymentReceived: true,
+                notifyByocInvite: true,
+                notifyDeadlineReminder: true,
+                notifyWeeklySummary: false,
+                updatedAt: Date.now(),
+            };
+        }
+
+        return settings;
     },
 });
 

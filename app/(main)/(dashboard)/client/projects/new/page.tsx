@@ -101,7 +101,7 @@ export default function NewProjectPage() {
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             required
-                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                             placeholder="Contoh: Website Redesign untuk Startup"
                         />
                     </div>
@@ -115,7 +115,7 @@ export default function NewProjectPage() {
                             onChange={(e) => setDescription(e.target.value)}
                             required
                             rows={4}
-                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                             placeholder="Jelaskan kebutuhan proyek Anda..."
                         />
                     </div>
@@ -128,7 +128,7 @@ export default function NewProjectPage() {
                             <select
                                 value={category}
                                 onChange={(e) => setCategory(e.target.value)}
-                                className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                             >
                                 <option value="ui_ux">UI/UX Design</option>
                                 <option value="motion">Motion Graphics</option>
@@ -146,7 +146,7 @@ export default function NewProjectPage() {
                                 value={deadline}
                                 onChange={(e) => setDeadline(e.target.value)}
                                 required
-                                className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                             />
                         </div>
                     </div>
@@ -162,7 +162,7 @@ export default function NewProjectPage() {
                                 onChange={(e) => setBudget(e.target.value)}
                                 required
                                 min="100"
-                                className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                 placeholder="5000"
                             />
                         </div>
@@ -173,7 +173,7 @@ export default function NewProjectPage() {
                             <select
                                 value={currency}
                                 onChange={(e) => setCurrency(e.target.value)}
-                                className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                             >
                                 <option value="USD">USD</option>
                                 <option value="IDR">IDR</option>
@@ -224,7 +224,7 @@ export default function NewProjectPage() {
                                     onChange={(e) => updateMilestone(index, "title", e.target.value)}
                                     required
                                     placeholder="Judul milestone"
-                                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                 />
                             </div>
 
@@ -235,7 +235,7 @@ export default function NewProjectPage() {
                                     required
                                     rows={2}
                                     placeholder="Deskripsi deliverable"
-                                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                 />
                             </div>
 
@@ -247,14 +247,14 @@ export default function NewProjectPage() {
                                     required
                                     min="0"
                                     placeholder="Jumlah (USD)"
-                                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                 />
                                 <input
                                     type="date"
                                     value={milestone.deadline}
                                     onChange={(e) => updateMilestone(index, "deadline", e.target.value)}
                                     required
-                                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                 />
                             </div>
                         </div>

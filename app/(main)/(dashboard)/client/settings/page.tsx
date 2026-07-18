@@ -32,16 +32,38 @@ export default function ClientSettings() {
     const [saved, setSaved] = useState(false);
 
     const settings = useQuery(
-        api.settings.get,
+        api.userSettings.getByUser,
         session?.user?.id ? { userId: session.user.id as any } : "skip"
     );
     const bankAccounts = useQuery(
-        api.settings.getBankAccounts,
+        api.bankAccounts.getByUser,
         session?.user?.id ? { userId: session.user.id as any } : "skip"
     );
 
-    const updateSettings = useMutation(api.settings.update);
+    const updateSettings = useMutation(api.userSettings.upsert);
     const updateAvatar = useMutation(api.settings.updateAvatar);
+    const removeBankAccount = useMutation(api.bankAccounts.remove);
+    const setDefaultBankAccount = useMutation(api.bankAccounts.setDefault);
+
+    const handleDeleteBankAccount = async (id: any) => {
+        try {
+            await removeBankAccount({ bankAccountId: id });
+        } catch (error) {
+            console.error("Gagal menghapus rekening bank:", error);
+        }
+    };
+
+    const handleSetDefaultBankAccount = async (id: any) => {
+        if (!session?.user?.id) return;
+        try {
+            await setDefaultBankAccount({
+                bankAccountId: id,
+                userId: session.user.id as any,
+            });
+        } catch (error) {
+            console.error("Gagal menetapkan rekening default:", error);
+        }
+    };
 
     const isLoading = settings === undefined;
 
@@ -115,8 +137,8 @@ export default function ClientSettings() {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={`flex items-center gap-3 px-4 py-3 rounded-lg text-body-sm font-medium whitespace-nowrap transition-colors ${activeTab === tab.id
-                                    ? "bg-primary-900 text-white"
-                                    : "text-primary-700 hover:bg-neutral-100"
+                                ? "bg-primary-900 text-white"
+                                : "text-primary-700 hover:bg-neutral-100"
                                 }`}
                         >
                             <tab.icon className="w-4 h-4" />
@@ -170,7 +192,7 @@ export default function ClientSettings() {
                                         type="text"
                                         value={displayName}
                                         onChange={(e) => setDisplayName(e.target.value)}
-                                        className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                        className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                     />
                                 </div>
                                 <div>
@@ -193,7 +215,7 @@ export default function ClientSettings() {
                                         value={company}
                                         onChange={(e) => setCompany(e.target.value)}
                                         placeholder="Nama perusahaan"
-                                        className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                        className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                     />
                                 </div>
                                 <div>
@@ -205,7 +227,7 @@ export default function ClientSettings() {
                                         value={website}
                                         onChange={(e) => setWebsite(e.target.value)}
                                         placeholder="https://example.com"
-                                        className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                        className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                     />
                                 </div>
                                 <div>
@@ -217,7 +239,7 @@ export default function ClientSettings() {
                                         value={location}
                                         onChange={(e) => setLocation(e.target.value)}
                                         placeholder="Jakarta, Indonesia"
-                                        className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                        className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                     />
                                 </div>
                                 <div>
@@ -229,7 +251,7 @@ export default function ClientSettings() {
                                         onChange={(e) => setBio(e.target.value)}
                                         rows={3}
                                         placeholder="Ceritakan sedikit tentang Anda..."
-                                        className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                        className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                     />
                                 </div>
                             </div>
@@ -295,12 +317,12 @@ export default function ClientSettings() {
 
                             {/* Bank Accounts dari Convex */}
                             <div className="space-y-3">
-                                {bankAccounts?.map((account) => (
+                                {bankAccounts?.map((account: { _id: string; bankName: string; accountNumber: string; accountHolder: string; isDefault: boolean }) => (
                                     <div
                                         key={account._id}
                                         className={`flex items-center justify-between p-4 rounded-lg border ${account.isDefault
-                                                ? "border-secondary-300 bg-secondary-50"
-                                                : "border-neutral-200"
+                                            ? "border-secondary-300 bg-secondary-50"
+                                            : "border-neutral-200"
                                             }`}
                                     >
                                         <div className="flex items-center gap-3">
@@ -314,11 +336,30 @@ export default function ClientSettings() {
                                                 </p>
                                             </div>
                                         </div>
-                                        {account.isDefault && (
-                                            <span className="px-2 py-1 rounded-full bg-secondary-500 text-white text-caption font-medium">
-                                                Default
-                                            </span>
-                                        )}
+                                        <div className="flex items-center gap-2">
+                                            {account.isDefault ? (
+                                                <span className="px-2 py-1 rounded-full bg-secondary-500 text-white text-caption font-medium">
+                                                    Default
+                                                </span>
+                                            ) : (
+                                                <Button
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    className="text-caption text-neutral-500 hover:text-primary-900"
+                                                    onClick={() => handleSetDefaultBankAccount(account._id)}
+                                                >
+                                                    Set Default
+                                                </Button>
+                                            )}
+                                            <Button
+                                                size="sm"
+                                                variant="ghost"
+                                                className="text-error hover:bg-error-light p-1 h-8 w-8"
+                                                onClick={() => handleDeleteBankAccount(account._id)}
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </Button>
+                                        </div>
                                     </div>
                                 ))}
 
@@ -408,14 +449,14 @@ export default function ClientSettings() {
                                             <button
                                                 onClick={() => toggleNotification(item.key)}
                                                 className={`w-11 h-6 rounded-full transition-colors relative ${notifications[item.key]
-                                                        ? "bg-secondary-500"
-                                                        : "bg-neutral-300"
+                                                    ? "bg-secondary-500"
+                                                    : "bg-neutral-300"
                                                     }`}
                                             >
                                                 <div
                                                     className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${notifications[item.key]
-                                                            ? "translate-x-6"
-                                                            : "translate-x-1"
+                                                        ? "translate-x-6"
+                                                        : "translate-x-1"
                                                         }`}
                                                 ></div>
                                             </button>
@@ -440,14 +481,14 @@ export default function ClientSettings() {
                                             <button
                                                 onClick={() => toggleNotification(item.key)}
                                                 className={`w-11 h-6 rounded-full transition-colors relative ${notifications[item.key]
-                                                        ? "bg-secondary-500"
-                                                        : "bg-neutral-300"
+                                                    ? "bg-secondary-500"
+                                                    : "bg-neutral-300"
                                                     }`}
                                             >
                                                 <div
                                                     className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${notifications[item.key]
-                                                            ? "translate-x-6"
-                                                            : "translate-x-1"
+                                                        ? "translate-x-6"
+                                                        : "translate-x-1"
                                                         }`}
                                                 ></div>
                                             </button>
@@ -473,7 +514,7 @@ export default function ClientSettings() {
                                         <input
                                             type="password"
                                             placeholder="••••••••"
-                                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                         />
                                     </div>
                                     <div>
@@ -483,7 +524,7 @@ export default function ClientSettings() {
                                         <input
                                             type="password"
                                             placeholder="Minimal 8 karakter"
-                                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                         />
                                     </div>
                                     <div>
@@ -493,7 +534,7 @@ export default function ClientSettings() {
                                         <input
                                             type="password"
                                             placeholder="Ulangi password baru"
-                                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                         />
                                     </div>
                                     <Button className="bg-primary-900 hover:bg-primary-800 text-white w-fit">

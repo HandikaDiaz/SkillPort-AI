@@ -5,7 +5,7 @@ import {
 
 export const trustStats = [
     { icon: Shield, value: "<3%", label: "Risiko gagal bayar (dari 22%)" },
-    { icon: TrendingDown, value: "1.25%", label: "Fee platform (vs 20% lainnya)" },
+    { icon: TrendingDown, value: "5%", label: "Fee platform (vs 20% lainnya)" },
     { icon: Clock, value: "<30 menit", label: "Settlement ke rekening Rupiah" },
     { icon: Scale, value: "100%", label: "Patuh regulasi Indonesia" },
 ];
@@ -43,8 +43,8 @@ export const problemSolutions = [
     {
         problem: "Fee Platform Tinggi",
         problemDesc: "Platform global membebankan fee 20% dari pendapatan Anda.",
-        solution: "BYOC 1.25%",
-        solutionDesc: "Bawa klien Anda sendiri, bayar hanya 1.25% fee.",
+        solution: "BYOC 5%",
+        solutionDesc: "Bawa klien Anda sendiri, bayar hanya 5% fee.",
     },
     {
         problem: "Reputasi Tidak Terverifikasi",
@@ -85,7 +85,7 @@ export const faqs = [
     },
     {
         q: "Berapa biaya menggunakan SkillPort AI?",
-        a: "Fee platform hanya 1.25% untuk proyek BYOC (Bring Your Own Client), jauh lebih rendah dari platform lain yang membebankan 10-20%.",
+        a: "Fee platform hanya 5% untuk proyek BYOC (Bring Your Own Client), jauh lebih rendah dari platform lain yang membebankan 10-20%.",
     },
     {
         q: "Apakah saya perlu memahami kripto?",

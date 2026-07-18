@@ -40,7 +40,7 @@ export default function ChatLayout({ userRole }: ChatLayoutProps) {
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="Cari percakapan..."
-                            className="w-full pl-10 pr-4 py-2 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                            className="w-full pl-10 pr-4 py-2 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                         />
                     </div>
                 </div>

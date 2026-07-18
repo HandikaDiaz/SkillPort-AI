@@ -25,7 +25,6 @@ const clientNavItems = [
     { label: "Proyek", icon: FolderKanban, href: "/client/projects" },
     { label: "Keuangan", icon: Wallet, href: "/client/finance" },
     { label: "Talenta", icon: Users, href: "#" },
-    { label: "Pesan", icon: MessageSquare, href: "/messages" },
     { label: "Pengaturan", icon: Settings, href: "/client/settings" },
 ];
 

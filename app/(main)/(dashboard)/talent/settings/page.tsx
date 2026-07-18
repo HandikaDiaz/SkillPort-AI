@@ -167,13 +167,13 @@ export default function TalentSettings() {
         });
     };
 
-    if (settings === undefined) {
-        return (
-            <div className="flex items-center justify-center min-h-[60vh]">
-                <Loader2 className="w-8 h-8 animate-spin text-secondary-500" />
-            </div>
-        );
-    }
+    // if (settings === undefined) {
+    //     return (
+    //         <div className="flex items-center justify-center min-h-[60vh]">
+    //             <Loader2 className="w-8 h-8 animate-spin text-secondary-500" />
+    //         </div>
+    //     );
+    // }
 
     return (
         <div className="space-y-6">
@@ -199,8 +199,8 @@ export default function TalentSettings() {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={`flex items-center gap-3 px-4 py-3 rounded-lg text-body-sm font-medium whitespace-nowrap transition-colors ${activeTab === tab.id
-                                    ? "bg-primary-900 text-white"
-                                    : "text-primary-700 hover:bg-neutral-100"
+                                ? "bg-primary-900 text-white"
+                                : "text-primary-700 hover:bg-neutral-100"
                                 }`}
                         >
                             <tab.icon className="w-4 h-4" />
@@ -252,7 +252,7 @@ export default function TalentSettings() {
                                             onChange={(e) =>
                                                 setFormData({ ...formData, displayName: e.target.value })
                                             }
-                                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                         />
                                     </div>
                                     <div>
@@ -262,7 +262,7 @@ export default function TalentSettings() {
                                         <input
                                             type="text"
                                             placeholder="Budi"
-                                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                         />
                                     </div>
                                 </div>
@@ -277,7 +277,7 @@ export default function TalentSettings() {
                                             setFormData({ ...formData, title: e.target.value })
                                         }
                                         placeholder="Senior UI/UX Designer"
-                                        className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                        className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                     />
                                 </div>
                                 <div>
@@ -291,7 +291,7 @@ export default function TalentSettings() {
                                         }
                                         placeholder="UI/UX Designer dengan pengalaman 3+ tahun..."
                                         rows={3}
-                                        className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info resize-none"
+                                        className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info resize-none text-primary-700"
                                     />
                                     <p className="text-caption text-neutral-400 mt-1">
                                         {formData.bio.length}/300 karakter
@@ -309,7 +309,7 @@ export default function TalentSettings() {
                                                 setFormData({ ...formData, location: e.target.value })
                                             }
                                             placeholder="Jakarta, Indonesia"
-                                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                         />
                                     </div>
                                     <div>
@@ -323,7 +323,7 @@ export default function TalentSettings() {
                                                 setFormData({ ...formData, languages: e.target.value })
                                             }
                                             placeholder="Indonesia, English"
-                                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                         />
                                     </div>
                                 </div>
@@ -339,7 +339,7 @@ export default function TalentSettings() {
                                                 setFormData({ ...formData, hourlyRate: e.target.value })
                                             }
                                             placeholder="25"
-                                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                         />
                                     </div>
                                     <div>
@@ -353,7 +353,7 @@ export default function TalentSettings() {
                                                 setFormData({ ...formData, projectRate: e.target.value })
                                             }
                                             placeholder="1500"
-                                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                         />
                                     </div>
                                 </div>
@@ -397,7 +397,7 @@ export default function TalentSettings() {
                                             e.key === "Enter" && (e.preventDefault(), addSkill())
                                         }
                                         placeholder="Tambah skill..."
-                                        className="flex-1 px-4 py-2 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                        className="flex-1 px-4 py-2 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                     />
                                     <Button
                                         onClick={addSkill}
@@ -479,7 +479,7 @@ export default function TalentSettings() {
                                         <input
                                             type="password"
                                             placeholder="••••••••"
-                                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                         />
                                     </div>
                                     <div>
@@ -489,7 +489,7 @@ export default function TalentSettings() {
                                         <input
                                             type="password"
                                             placeholder="Minimal 8 karakter"
-                                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                         />
                                     </div>
                                     <div>
@@ -499,7 +499,7 @@ export default function TalentSettings() {
                                         <input
                                             type="password"
                                             placeholder="Ulangi password baru"
-                                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                         />
                                     </div>
                                     <Button className="bg-primary-900 hover:bg-primary-800 text-white w-fit">
@@ -571,15 +571,15 @@ export default function TalentSettings() {
                                         </span>
                                         <div
                                             className={`w-11 h-6 rounded-full transition-colors relative ${formData.notifications[item.key]
-                                                    ? "bg-secondary-500"
-                                                    : "bg-neutral-300"
+                                                ? "bg-secondary-500"
+                                                : "bg-neutral-300"
                                                 }`}
                                             onClick={() => toggleNotification(item.key)}
                                         >
                                             <div
                                                 className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${formData.notifications[item.key]
-                                                        ? "translate-x-6"
-                                                        : "translate-x-1"
+                                                    ? "translate-x-6"
+                                                    : "translate-x-1"
                                                     }`}
                                             ></div>
                                         </div>
@@ -608,8 +608,8 @@ export default function TalentSettings() {
                                             <label
                                                 key={type}
                                                 className={`flex items-center gap-2 px-4 py-2 rounded-lg border cursor-pointer hover:bg-neutral-50 ${formData.projectTypes.includes(type)
-                                                        ? "border-secondary-500 bg-secondary-50"
-                                                        : "border-neutral-200"
+                                                    ? "border-secondary-500 bg-secondary-50"
+                                                    : "border-neutral-200"
                                                     }`}
                                                 onClick={() => toggleArray("projectTypes", type)}
                                             >
@@ -638,7 +638,7 @@ export default function TalentSettings() {
                                                 setFormData({ ...formData, minBudget: e.target.value })
                                             }
                                             placeholder="500"
-                                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                         />
                                     </div>
                                     <div>
@@ -652,7 +652,7 @@ export default function TalentSettings() {
                                                 setFormData({ ...formData, maxBudget: e.target.value })
                                             }
                                             placeholder="10000"
-                                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info"
+                                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-info/20 focus:border-info text-primary-700"
                                         />
                                     </div>
                                 </div>
@@ -666,8 +666,8 @@ export default function TalentSettings() {
                                                 <label
                                                     key={region}
                                                     className={`flex items-center gap-2 px-4 py-2 rounded-lg border cursor-pointer hover:bg-neutral-50 ${formData.preferredRegions.includes(region)
-                                                            ? "border-secondary-500 bg-secondary-50"
-                                                            : "border-neutral-200"
+                                                        ? "border-secondary-500 bg-secondary-50"
+                                                        : "border-neutral-200"
                                                         }`}
                                                     onClick={() =>
                                                         toggleArray("preferredRegions", region)
@@ -698,8 +698,8 @@ export default function TalentSettings() {
                                             <label
                                                 key={avail}
                                                 className={`flex items-center gap-2 px-4 py-2 rounded-lg border cursor-pointer hover:bg-neutral-50 ${formData.availability.includes(avail)
-                                                        ? "border-secondary-500 bg-secondary-50"
-                                                        : "border-neutral-200"
+                                                    ? "border-secondary-500 bg-secondary-50"
+                                                    : "border-neutral-200"
                                                     }`}
                                                 onClick={() => toggleArray("availability", avail)}
                                             >

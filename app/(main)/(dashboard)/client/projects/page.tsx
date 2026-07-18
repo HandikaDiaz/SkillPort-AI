@@ -43,7 +43,7 @@ export default function ClientProjects() {
             : "skip"
     );
 
-    const isLoading = projects === undefined;
+    // const isLoading = projects === undefined;
 
     const getStatusConfig = (status: string) => {
         switch (status) {
@@ -111,8 +111,8 @@ export default function ClientProjects() {
                             key={f.id}
                             onClick={() => setFilter(f.id)}
                             className={`px-4 py-2 rounded-full text-body-sm font-medium whitespace-nowrap transition-colors ${filter === f.id
-                                    ? "bg-primary-900 text-white"
-                                    : "bg-white border border-neutral-200 text-neutral-600 hover:bg-neutral-50"
+                                ? "bg-primary-900 text-white"
+                                : "bg-white border border-neutral-200 text-neutral-600 hover:bg-neutral-50"
                                 }`}
                         >
                             {f.label}
@@ -138,11 +138,7 @@ export default function ClientProjects() {
 
             {/* Project Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-                {isLoading ? (
-                    <div className="col-span-3 text-center py-12 text-neutral-500">
-                        Memuat proyek...
-                    </div>
-                ) : projects?.length === 0 ? (
+                {projects?.length === undefined ? (
                     <div className="col-span-3 text-center py-12 text-neutral-500">
                         Belum ada proyek.{" "}
                         <button

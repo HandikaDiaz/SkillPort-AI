@@ -5,7 +5,7 @@ import FadeIn from "../ui/fadeIn";
 
 export default function BYOCSection() {
     const listItems = [
-        "Fee hanya 1.25% vs 20%",
+        "Fee hanya 5% vs 20%",
         "Klien tidak perlu paham kripto",
         "Pengalaman identik transfer bank",
         "Dana cair <30 menit",
@@ -70,13 +70,13 @@ export default function BYOCSection() {
                                 <div className="p-4 rounded-xl bg-secondary-500/10 border border-secondary-500/20">
                                     <div className="flex items-center justify-between mb-2">
                                         <span className="text-body-sm text-secondary-300">SkillPort AI</span>
-                                        <span className="text-caption text-secondary-400 font-medium">Fee 1.25%</span>
+                                        <span className="text-caption text-secondary-400 font-medium">Fee 5%</span>
                                     </div>
                                     <div className="flex items-baseline gap-2">
                                         <span className="text-body text-primary-400">USD 5,000</span>
-                                        <span className="text-h3 text-secondary-400 font-bold">USD 4,937</span>
+                                        <span className="text-h3 text-secondary-400 font-bold">USD 4,525</span>
                                     </div>
-                                    <p className="text-caption text-secondary-300 mt-1">Anda hemat USD 937</p>
+                                    <p className="text-caption text-secondary-300 mt-1">Anda hemat USD 525</p>
                                 </div>
                             </div>
                         </div>

@@ -83,7 +83,7 @@ export default function ClientDashboard() {
                     subtitle="2 menunggu approval"
                     icon={FolderKanban}
                     color="warning"
-                    trend={{ value: 25, isPositive: true }}
+                    trend={{ value: 0, isPositive: true }}
                 />
                 <DashboardWidget
                     title="Talenta Bekerja"
@@ -94,11 +94,11 @@ export default function ClientDashboard() {
                 />
                 <DashboardWidget
                     title="Total Dibelanjakan"
-                    value="$ 52,100"
+                    value="$ 0"
                     subtitle="sejak bergabung"
                     icon={Banknote}
                     color="secondary"
-                    trend={{ value: 12, isPositive: true }}
+                    trend={{ value: 0, isPositive: true }}
                 />
             </div>
 

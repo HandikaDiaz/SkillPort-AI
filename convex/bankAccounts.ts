@@ -35,3 +35,32 @@ export const create = mutation({
         });
     },
 });
+
+export const remove = mutation({
+    args: { bankAccountId: v.id("bankAccounts") },
+    handler: async (ctx, { bankAccountId }) => {
+        await ctx.db.delete(bankAccountId);
+    },
+});
+
+export const setDefault = mutation({
+    args: {
+        bankAccountId: v.id("bankAccounts"),
+        userId: v.id("users"),
+    },
+    handler: async (ctx, { bankAccountId, userId }) => {
+        // Un-default semua rekening milik user ini
+        const all = await ctx.db
+            .query("bankAccounts")
+            .withIndex("userId", (q) => q.eq("userId", userId))
+            .collect();
+
+        await Promise.all(
+            all.map((acc) =>
+                ctx.db.patch(acc._id, {
+                    isDefault: acc._id === bankAccountId,
+                })
+            )
+        );
+    },
+});

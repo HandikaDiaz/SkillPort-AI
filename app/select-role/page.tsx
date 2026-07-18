@@ -80,11 +80,10 @@ export default function SelectRolePage() {
                     <button
                         onClick={() => handleSelectRole("client")}
                         disabled={isLoading}
-                        className={`flex flex-col text-left p-6 rounded-2xl border transition-all duration-300 group cursor-pointer ${
-                            selectedRole === "client"
+                        className={`flex flex-col text-left p-6 rounded-2xl border transition-all duration-300 group cursor-pointer ${selectedRole === "client"
                                 ? "bg-secondary-500/20 border-secondary-500 shadow-[0_0_20px_rgba(245,158,11,0.2)]"
                                 : "bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/10"
-                        }`}
+                            }`}
                     >
                         <div className="w-12 h-12 rounded-xl bg-secondary-500/20 flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
                             <Briefcase className="w-6 h-6 text-secondary-400" />
@@ -94,7 +93,7 @@ export default function SelectRolePage() {
                             <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0" />
                         </h3>
                         <p className="text-neutral-400 text-sm leading-relaxed">
-                            Saya ingin mempekerjakan talenta kreatif, memanage proyek, dan mengamankan pembayaran dengan sistem escrow flat 1.25%.
+                            Saya ingin mempekerjakan talenta kreatif, memanage proyek, dan mengamankan pembayaran dengan sistem escrow flat 5%.
                         </p>
                     </button>
 
@@ -102,11 +101,10 @@ export default function SelectRolePage() {
                     <button
                         onClick={() => handleSelectRole("talent")}
                         disabled={isLoading}
-                        className={`flex flex-col text-left p-6 rounded-2xl border transition-all duration-300 group cursor-pointer ${
-                            selectedRole === "talent"
+                        className={`flex flex-col text-left p-6 rounded-2xl border transition-all duration-300 group cursor-pointer ${selectedRole === "talent"
                                 ? "bg-primary-500/20 border-primary-500 shadow-[0_0_20px_rgba(59,130,246,0.2)]"
                                 : "bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/10"
-                        }`}
+                            }`}
                     >
                         <div className="w-12 h-12 rounded-xl bg-primary-500/20 flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
                             <Users className="w-6 h-6 text-primary-400" />

@@ -12,6 +12,7 @@ import type * as authAdapter from "../authAdapter.js";
 import type * as bankAccounts from "../bankAccounts.js";
 import type * as byocInvites from "../byocInvites.js";
 import type * as credentials from "../credentials.js";
+import type * as escrow from "../escrow.js";
 import type * as finances from "../finances.js";
 import type * as http from "../http.js";
 import type * as messages from "../messages.js";
@@ -37,6 +38,7 @@ declare const fullApi: ApiFromModules<{
   bankAccounts: typeof bankAccounts;
   byocInvites: typeof byocInvites;
   credentials: typeof credentials;
+  escrow: typeof escrow;
   finances: typeof finances;
   http: typeof http;
   messages: typeof messages;
